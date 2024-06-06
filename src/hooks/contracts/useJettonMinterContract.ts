@@ -10,7 +10,7 @@ export function useJettonMinterContract(jettonAddress: AddressType | undefined) 
         if (!tonApiClient || !jettonAddress) return;
 
         return new JettonMinter(
-            tonApiClient,
+            tonApiClient.provider,
             // @ts-expect-error - not all parameters are really required here
             {
                 address: jettonAddress,

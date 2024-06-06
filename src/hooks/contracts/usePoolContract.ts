@@ -9,6 +9,6 @@ export function usePoolContract(pool: AddressType | undefined) {
     return useMemo(() => {
         if (!tonApiClient || !pool) return;
 
-        return new Pool({ tonApiClient, address: pool });
+        return new Pool({ tonApiClient: tonApiClient.provider, address: pool });
     }, [tonApiClient, pool]);
 }

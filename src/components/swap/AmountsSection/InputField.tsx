@@ -8,7 +8,7 @@ export const InputField: React.FC<InputFieldProps> = ({ isLoading, onClick, onCh
         <label className="flex w-full items-center min-h-[104px] h-full border-2 border-border-light rounded-2xl bg-dark">
             <div
                 onClick={onClick}
-                className="flex w-1/2 p-4 ml-4 rounded-2xl h-3/4 hover:bg-light items-center gap-4 cursor-pointer transition-all ease-in-out duration-300"
+                className="flex w-1/2 p-4 ml-3 rounded-xl h-3/4 hover:bg-light items-center gap-4 cursor-pointer transition-all ease-in-out duration-300"
             >
                 <img width={40} height={40} src={selectedToken.logo} />
                 <p className="font-semibold text-token-select">{selectedToken.symbol}</p>

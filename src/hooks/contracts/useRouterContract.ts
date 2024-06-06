@@ -7,6 +7,6 @@ export function useRouterContract() {
 
     return useMemo(() => {
         if (!tonApiClient) return;
-        return new Router({ tonApiClient });
+        return new Router({ tonApiClient: tonApiClient.provider });
     }, [tonApiClient]);
 }

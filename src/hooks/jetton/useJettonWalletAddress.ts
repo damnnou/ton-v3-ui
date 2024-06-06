@@ -1,17 +1,15 @@
 import { useEffect, useState } from "react";
 import TonWeb, { AddressType } from "tonweb";
-import { HttpProvider } from "tonweb/dist/types/providers/http-provider";
 import { useJettonMinterContract } from "../contracts/useJettonMinterContract";
 
 interface Props {
     jettonAddress: AddressType;
     ownerAddress: AddressType;
-    client: HttpProvider;
 }
 
 const Address = TonWeb.Address;
 
-export function useJettonWalletAddress({ jettonAddress, ownerAddress }: Partial<Props>) {
+export function useJettonWalletAddress({ jettonAddress, ownerAddress }: Props) {
     const [jettonWalletAddress, setJettonWalletAddress] = useState<AddressType>();
 
     const jettonMinter = useJettonMinterContract(jettonAddress);

@@ -1,5 +1,12 @@
 import { CHAIN, useTonConnectUI, useTonWallet } from "@tonconnect/ui-react";
-import { Sender, SenderArguments } from "ton-core";
+import { MessageData } from "@ston-fi/sdk";
+
+// @ts-expect-error - polyfill with no types
+import { encode } from "uint8-to-base64";
+
+export type Sender = {
+    send: (args: MessageData) => Promise<void>;
+};
 
 export function useTonConnect(): {
     sender: Sender;
@@ -12,13 +19,18 @@ export function useTonConnect(): {
 
     return {
         sender: {
-            send: async (args: SenderArguments) => {
+            send: async (args: MessageData) => {
+                console.log("sending message: ", {
+                    address: args.to.toString(),
+                    amount: args.gasAmount.toString(),
+                    payload: encode(await args.payload.toBoc()),
+                });
                 tonConnectUI.sendTransaction({
                     messages: [
                         {
                             address: args.to.toString(),
-                            amount: args.value.toString(),
-                            payload: args.body?.toBoc().toString("base64"),
+                            amount: args.gasAmount.toString(),
+                            payload: encode(await args.payload.toBoc()),
                         },
                     ],
                     validUntil: Date.now() + 5 * 60 * 1000, // 5 min

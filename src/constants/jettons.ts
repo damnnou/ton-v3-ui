@@ -10,11 +10,7 @@ export interface Jetton {
     decimals: number;
 }
 
-export type Jettons = {
-    [key: string]: Jetton;
-};
-
-export const jettons: Jettons = {
+export const jettons = {
     TON: {
         symbol: "TON",
         address: pTON.v1.address.toString(),

@@ -16,10 +16,10 @@ const Navigation = () => {
     const { pathname } = useLocation();
 
     const setNavlinkClasses = (paths: string[]) =>
-        paths.some((path) => matchPath(path, pathname)) ? "text-pink-300 bg-pink-600/40 " : "hover:bg-pink-700/80";
+        paths.some((path) => matchPath(path, pathname)) ? "bg-primary-red" : "hover:bg-primary-red/50";
 
     return (
-        <nav>
+        <nav className="w-1/3">
             <ul className="flex justify-center gap-1 rounded-full whitespace-nowrap">
                 {menuItems.map((item) => (
                     <NavLink
