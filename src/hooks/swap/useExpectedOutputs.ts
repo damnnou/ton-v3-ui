@@ -46,6 +46,7 @@ export function useExpectedOutputs(
         const timeout = setInterval(() => {
             pool.getExpectedOutputs({ jettonWallet: jetton0WalletAddress, amount: amount * 10 ** tokenIn.decimals })
                 .then(setOutputs)
+                .catch(() => setOutputs(undefined))
                 .finally(() => setIsLoading(false));
         }, 5000);
 
