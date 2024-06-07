@@ -1,5 +1,4 @@
 import { useState } from "react";
-
 import TokenSelectMenu from "../TokenSelectMenu";
 import { cn } from "../../../lib/cn";
 import { MenuState } from "../../../types/token-menu";
@@ -36,8 +35,8 @@ export const AmountsSection = () => {
         <>
             <div
                 className={cn(
-                    "relative w-full h-fit rounded-2xl transition-all duration-300 bg-light delay-50 overflow-hidden shadow-2xl shadow-purple-500/10 flex flex-col sm:gap-4 gap-2 border-2 border-border-light sm:p-4 sm:rounded-3xl sm:bg-light p-2",
-                    menuState === MenuState.CLOSED ? "h-[350px]" : "h-[250px]"
+                    "relative w-full rounded-2xl transition-all duration-300 bg-light delay-50 overflow-hidden shadow-2xl shadow-purple-500/10 flex flex-col sm:gap-4 gap-2 border-2 border-border-light sm:p-4 sm:rounded-3xl sm:bg-light p-2",
+                    menuState === MenuState.CLOSED ? "h-[318px] sm:h-[350px]" : "h-[250px]"
                 )}
             >
                 {menuState === MenuState.CLOSED && (

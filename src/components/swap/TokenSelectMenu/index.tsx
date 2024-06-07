@@ -13,7 +13,7 @@ const TokenSelectMenu: React.FC<TokenSelectMenuProps> = ({ onClick, onSelect, se
             </label>
             <ul>
                 {Object.keys(jettons).map((token) => {
-                    const isTokenSelected = selectedToken.address === jettons[token].address;
+                    const isTokenSelected = selectedToken.address === jettons[token as keyof typeof jettons].address;
                     return (
                         <li
                             onClick={() => !isTokenSelected && onSelect(token)}
@@ -26,7 +26,7 @@ const TokenSelectMenu: React.FC<TokenSelectMenuProps> = ({ onClick, onSelect, se
                             key={token}
                             value={token}
                         >
-                            <img alt={`${token} Logo`} width={32} height={32} src={jettons[token].logo} />
+                            <img alt={`${token} Logo`} width={32} height={32} src={jettons[token as keyof typeof jettons].logo} />
                             <span className="text-token-select">{token}</span>
                         </li>
                     );
