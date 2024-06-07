@@ -22,7 +22,7 @@ const router = createBrowserRouter([
     },
 ]);
 
-const manifestUrl = "https://lilchizh.github.io/ton-test-ui/tonconnect-manifest.json";
+const manifestUrl = "https://damnnou.github.io/ton-manifest/ton-manifest.json";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
     <React.StrictMode>
