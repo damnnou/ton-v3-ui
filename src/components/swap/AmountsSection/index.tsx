@@ -16,7 +16,7 @@ export const AmountsSection = () => {
     const [menuState, setMenuState] = useState<MenuState>(MenuState.CLOSED);
 
     const [inputCurrency, setInputCurrency] = useState<Jetton>(jettons.TON);
-    const [outputCurrency, setOutputCurrency] = useState<Jetton>(jettons.USDT);
+    const [outputCurrency, setOutputCurrency] = useState<Jetton>(jettons.jUSDT);
 
     const [inputValue, setInputValue] = useState<number>(0);
 

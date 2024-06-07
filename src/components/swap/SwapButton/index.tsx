@@ -23,7 +23,7 @@ export const SwapButton = ({ txParams, ...props }: SwapButtonProps) => {
             </ActionButton>
         );
 
-    if (network === CHAIN.TESTNET)
+    if (network === CHAIN.MAINNET)
         return <ActionButton disabled>{props.disabled ? <Spinner className="w-12 h-12" /> : "Switch to mainnet"}</ActionButton>;
 
     if (!txParams) return <ActionButton disabled>{props.disabled ? <Spinner className="w-12 h-12" /> : "Enter an amount"}</ActionButton>;
