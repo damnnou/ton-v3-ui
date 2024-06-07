@@ -58,6 +58,12 @@ export function useExpectedOutputs(
             protocolFee: undefined,
             isLoading,
         };
+    } else if (!amount) {
+        return {
+            expectedOutput: undefined,
+            protocolFee: undefined,
+            isLoading: false,
+        };
     }
 
     return {

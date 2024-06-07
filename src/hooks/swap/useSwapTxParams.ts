@@ -43,7 +43,11 @@ export function useSwapTxParams({
     const { wallet } = useTonConnect();
 
     useEffect(() => {
-        if (!wallet || !router || !minAskAmount || !offerAmount) return;
+        if (!wallet || !router || !minAskAmount || !offerAmount) {
+            setTxParams(undefined);
+            return;
+        }
+
         const swapType = getSwapType(offerJetton, askJetton);
 
         switch (swapType) {

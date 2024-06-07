@@ -16,15 +16,21 @@ export const SwapButton = ({ txParams, ...props }: SwapButtonProps) => {
 
     const { write, isLoading, isPending } = useSendTransaction(txParams);
 
-    if (!connected) return <ActionButton onClick={open}>Connect Wallet</ActionButton>;
+    if (!connected)
+        return (
+            <ActionButton disabled={props.disabled} onClick={open}>
+                {props.disabled ? <Spinner className="w-12 h-12" /> : "Connect wallet"}
+            </ActionButton>
+        );
 
-    if (network === CHAIN.TESTNET) return <ActionButton disabled>Switch to Mainnet</ActionButton>;
+    if (network === CHAIN.TESTNET)
+        return <ActionButton disabled>{props.disabled ? <Spinner className="w-12 h-12" /> : "Switch to mainnet"}</ActionButton>;
 
-    if (!txParams) return <ActionButton disabled>Enter amount</ActionButton>;
+    if (!txParams) return <ActionButton disabled>{props.disabled ? <Spinner className="w-12 h-12" /> : "Enter an amount"}</ActionButton>;
 
     return (
         <ActionButton {...props} disabled={isPending || isLoading || props.disabled} onClick={write}>
-            {isPending ? "Sending..." : isLoading ? <Spinner className="w-12 h-12" /> : "Swap"}
+            {isPending ? "Sending..." : isLoading || props.disabled ? <Spinner className="w-12 h-12" /> : "Swap"}
         </ActionButton>
     );
 };

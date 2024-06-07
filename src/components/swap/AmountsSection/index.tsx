@@ -20,7 +20,7 @@ export const AmountsSection = () => {
 
     const [inputValue, setInputValue] = useState<number>(0);
 
-    const debouncedValue = useDebounce(inputValue, 500);
+    const debouncedValue = useDebounce(inputValue, 300);
 
     const { expectedOutput, isLoading, protocolFee } = useExpectedOutputs(inputCurrency, outputCurrency, debouncedValue);
 
@@ -48,14 +48,12 @@ export const AmountsSection = () => {
                     <>
                         <div className="relative flex flex-col sm:gap-4 gap-2">
                             <InputField
-                                disabled={isLoading}
                                 onClick={() => setMenuState(MenuState.INPUT)}
                                 onChange={setInputValue}
                                 selectedToken={inputCurrency}
                                 value={inputValue > 0 ? inputValue : undefined}
                             />
                             <OutputField
-                                isLoading={isLoading}
                                 onClick={() => setMenuState(MenuState.OUTPUT)}
                                 selectedToken={outputCurrency}
                                 value={expectedOutput}
@@ -63,9 +61,10 @@ export const AmountsSection = () => {
                             <SwitchButton
                                 onClick={() => {
                                     if (isLoading) return;
-                                    setInputCurrency(outputCurrency);
+                                    const tempInputCurr = inputCurrency;
                                     setInputValue(expectedOutput || 0);
-                                    setOutputCurrency(inputCurrency);
+                                    setInputCurrency(outputCurrency);
+                                    setOutputCurrency(tempInputCurr);
                                 }}
                                 className="absolute left-1/2 translate-x-[-50%] top-1/2 translate-y-[-50%]"
                             />
@@ -86,28 +85,40 @@ export const AmountsSection = () => {
                     <>
                         <div className="flex items-center justify-between">
                             <span>Slippage tolerance:</span>
-                            <span>{(slippage * 100).toFixed(2)} %</span>
+                            {isLoading ? (
+                                <div className="w-16 h-[24px] bg-light animate-pulse rounded-lg"></div>
+                            ) : (
+                                <span>{(slippage * 100).toFixed(2)} %</span>
+                            )}
                         </div>
                         <div className="flex items-center justify-between">
                             <span>Minimum received:</span>
-                            <span>
-                                {minReceivedAmount.toFixed(4)} {outputCurrency.symbol}
-                            </span>
+                            {isLoading ? (
+                                <div className="w-24 h-[24px] bg-light animate-pulse rounded-lg"></div>
+                            ) : (
+                                <span>
+                                    {minReceivedAmount.toFixed(4)} {outputCurrency.symbol}
+                                </span>
+                            )}
                         </div>
                     </>
                 )}
                 {txFee && (
                     <div className="flex items-center justify-between">
                         <span>Blockchain fee:</span>
-                        <span>0.08 - 0.3 TON</span>
+                        {isLoading ? <div className="w-32 h-[24px] bg-light animate-pulse rounded-lg"></div> : <span>0.08 - 0.3 TON</span>}
                     </div>
                 )}
                 {protocolFee && (
                     <div className="flex items-center justify-between">
                         <span>Protocol fee:</span>
-                        <span>
-                            {protocolFee} {outputCurrency.symbol}
-                        </span>
+                        {isLoading ? (
+                            <div className="w-40 h-[24px] bg-light animate-pulse rounded-lg"></div>
+                        ) : (
+                            <span>
+                                {protocolFee} {outputCurrency.symbol}
+                            </span>
+                        )}
                     </div>
                 )}
             </div>

@@ -3,7 +3,7 @@ import { cn } from "src/lib/cn";
 
 export const Spinner: React.FC<SpinnerProps> = React.memo(({ className, ...props }) => {
     return (
-        <svg className={cn("w-8 h-8", className)} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" {...props}>
+        <svg className={cn("w-12 h-12", className)} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" {...props}>
             <radialGradient id="a12" cx=".66" fx=".66" cy=".3125" fy=".3125" gradientTransform="scale(1.5)">
                 <stop offset="0" stopColor="#FFFFFF"></stop>
                 <stop offset=".3" stopColor="#FFFFFF" stopOpacity=".9"></stop>
@@ -27,8 +27,8 @@ export const Spinner: React.FC<SpinnerProps> = React.memo(({ className, ...props
                     type="rotate"
                     attributeName="transform"
                     calcMode="spline"
-                    dur="1"
-                    values="360;0"
+                    dur="0.666"
+                    values="0;360"
                     keyTimes="0;1"
                     keySplines="0 0 1 1"
                     repeatCount="indefinite"

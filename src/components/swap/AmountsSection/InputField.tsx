@@ -4,6 +4,13 @@ import SpinnerSVG from "src/assets/spinner.svg";
 import { Jetton } from "src/constants/jettons";
 
 export const InputField: React.FC<InputFieldProps> = ({ isLoading, onClick, onChange, selectedToken, disabled, value }) => {
+    const handleOnChange = ({ target }: React.ChangeEvent<HTMLInputElement>) => {
+        if (!onChange) return;
+        const value = Number(target.value);
+
+        onChange(Math.abs(value));
+    };
+
     return (
         <label className="flex w-full items-center min-h-[104px] h-full border-2 border-border-light rounded-2xl bg-dark">
             <div
@@ -16,9 +23,9 @@ export const InputField: React.FC<InputFieldProps> = ({ isLoading, onClick, onCh
             </div>
             {!isLoading ? (
                 <input
-                    onChange={(e) => onChange && onChange(Number(e.target.value))}
+                    onChange={handleOnChange}
                     disabled={disabled}
-                    value={value}
+                    value={value ? value.toString() : ""}
                     type="number"
                     placeholder={disabled ? "" : "0.00"}
                     className="w-1/2 h-3/4 p-4 mr-4 ml-auto text-token-select outline-none bg-transparent text-right"
