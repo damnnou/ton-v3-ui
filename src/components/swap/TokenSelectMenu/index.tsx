@@ -5,9 +5,17 @@ import { cn } from "../../../lib/cn";
 import { Jetton, jettons } from "src/constants/jettons";
 
 const TokenSelectMenu: React.FC<TokenSelectMenuProps> = ({ onClick, onSelect, selectedToken }) => {
+    const handleClose = () => {
+        onClick(MenuState.CLOSED);
+    };
+
+    const handleJettonSelect = (token: Jetton) => {
+        onSelect(token);
+        onClick(MenuState.CLOSED);
+    };
     return (
         <fieldset className="w-[500px] h-[400px] -m-4">
-            <label onClick={() => onClick(MenuState.CLOSED)} className="flex items-center gap-2 cursor-pointer px-8 py-6">
+            <label onClick={handleClose} className="flex items-center gap-2 cursor-pointer px-8 py-6">
                 <img alt="Arrow" width={14} height={14} className="rotate-90" src={ArrowBtn} />
                 <p className="text-token-select">Select a token</p>
             </label>
@@ -16,7 +24,7 @@ const TokenSelectMenu: React.FC<TokenSelectMenuProps> = ({ onClick, onSelect, se
                     const isTokenSelected = selectedToken.address === jettons[token as keyof typeof jettons].address;
                     return (
                         <li
-                            onClick={() => !isTokenSelected && onSelect(token)}
+                            onClick={() => !isTokenSelected && handleJettonSelect(jettons[token as keyof typeof jettons])}
                             className={cn(
                                 "flex items-center gap-4 w-full px-8 py-3 transition-all ease-in-out duration-300 ",
                                 isTokenSelected
@@ -26,7 +34,13 @@ const TokenSelectMenu: React.FC<TokenSelectMenuProps> = ({ onClick, onSelect, se
                             key={token}
                             value={token}
                         >
-                            <img alt={`${token} Logo`} width={32} height={32} src={jettons[token as keyof typeof jettons].logo} />
+                            <img
+                                className="rounded-full"
+                                alt={`${token} Logo`}
+                                width={32}
+                                height={32}
+                                src={jettons[token as keyof typeof jettons].logo}
+                            />
                             <span className="text-token-select">{token}</span>
                         </li>
                     );
@@ -38,7 +52,7 @@ const TokenSelectMenu: React.FC<TokenSelectMenuProps> = ({ onClick, onSelect, se
 
 interface TokenSelectMenuProps {
     onClick: (state: MenuState) => void;
-    onSelect: (token: string) => void;
+    onSelect: (token: Jetton) => void;
     selectedToken: Jetton;
 }
 

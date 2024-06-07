@@ -5,7 +5,7 @@ import { ROUTER } from "src/constants/addresses";
 import { usePoolAddress } from "../pool/usePoolAddress";
 import { useEffect, useState } from "react";
 import { Jetton } from "src/constants/jettons";
-import { fromNano } from "ton-core";
+import { formatUnits } from "src/utils/formatUnits";
 
 interface ExpectedOutputs {
     jettonToReceive: BN;
@@ -20,7 +20,7 @@ export function useExpectedOutputs(
 ): {
     expectedOutput: number | undefined;
     isLoading: boolean;
-    protocolFee: string | undefined;
+    protocolFee: number | undefined;
 } {
     const [outputs, setOutputs] = useState<ExpectedOutputs>();
     const [isLoading, setIsLoading] = useState(false);
@@ -61,8 +61,8 @@ export function useExpectedOutputs(
     }
 
     return {
-        expectedOutput: outputs.jettonToReceive / 10 ** tokenOut.decimals,
-        protocolFee: fromNano(outputs.protocolFeePaid),
+        expectedOutput: formatUnits(outputs.jettonToReceive, tokenOut.decimals),
+        protocolFee: formatUnits(outputs.protocolFeePaid, tokenOut.decimals),
         isLoading,
     };
 }

@@ -5,29 +5,34 @@ import { MenuState } from "../../../types/token-menu";
 import { InputField } from "./InputField";
 import { OutputField } from "./OutputField";
 import { SwitchButton } from "../../ui/SwitchButton";
-import { jettons } from "src/constants/jettons";
+import { Jetton, jettons } from "src/constants/jettons";
 import { useExpectedOutputs } from "src/hooks/swap/useExpectedOutputs";
 import { useDebounce } from "src/hooks/common/useDebounce";
 import { SwapButton } from "../SwapButton";
-import { useSwapTonToJettonTxParams } from "src/hooks/swap/useSwapTxParams";
 import { fromNano } from "ton-core";
+import { useSwapTxParams } from "src/hooks/swap/useSwapTxParams";
 
 export const AmountsSection = () => {
     const [menuState, setMenuState] = useState<MenuState>(MenuState.CLOSED);
 
+    const [inputCurrency, setInputCurrency] = useState<Jetton>(jettons.TON);
+    const [outputCurrency, setOutputCurrency] = useState<Jetton>(jettons.USDT);
+
     const [inputValue, setInputValue] = useState<number>(0);
 
     const debouncedValue = useDebounce(inputValue, 500);
-
-    const inputCurrency = jettons.TON;
-    const outputCurrency = jettons.USDT;
 
     const { expectedOutput, isLoading, protocolFee } = useExpectedOutputs(inputCurrency, outputCurrency, debouncedValue);
 
     const slippage = 0.01; // 1%
     const minReceivedAmount = expectedOutput && expectedOutput * (1 - slippage);
 
-    const txParams = useSwapTonToJettonTxParams(outputCurrency, minReceivedAmount, debouncedValue);
+    const txParams = useSwapTxParams({
+        offerJetton: inputCurrency,
+        askJetton: outputCurrency,
+        offerAmount: debouncedValue,
+        minAskAmount: minReceivedAmount,
+    });
 
     const txFee = txParams && fromNano(txParams.gasAmount);
 
@@ -36,7 +41,7 @@ export const AmountsSection = () => {
             <div
                 className={cn(
                     "relative w-full rounded-2xl transition-all duration-300 bg-light delay-50 overflow-hidden shadow-2xl shadow-purple-500/10 flex flex-col sm:gap-4 gap-2 border-2 border-border-light sm:p-4 sm:rounded-3xl sm:bg-light p-2",
-                    menuState === MenuState.CLOSED ? "h-[318px] sm:h-[350px]" : "h-[250px]"
+                    menuState === MenuState.CLOSED ? "h-[318px] sm:h-[350px]" : "h-[450px]"
                 )}
             >
                 {menuState === MenuState.CLOSED && (
@@ -56,16 +61,21 @@ export const AmountsSection = () => {
                                 value={expectedOutput}
                             />
                             <SwitchButton
-                                onClick={() => null}
+                                onClick={() => {
+                                    if (isLoading) return;
+                                    setInputCurrency(outputCurrency);
+                                    setInputValue(expectedOutput || 0);
+                                    setOutputCurrency(inputCurrency);
+                                }}
                                 className="absolute left-1/2 translate-x-[-50%] top-1/2 translate-y-[-50%]"
                             />
                         </div>
-                        <SwapButton txParams={txParams} />
+                        <SwapButton disabled={isLoading} txParams={txParams} />
                     </>
                 )}
                 {menuState !== MenuState.CLOSED && (
                     <TokenSelectMenu
-                        onSelect={() => null}
+                        onSelect={menuState === MenuState.INPUT ? setInputCurrency : setOutputCurrency}
                         onClick={setMenuState}
                         selectedToken={menuState === MenuState.INPUT ? outputCurrency : inputCurrency}
                     />
@@ -95,7 +105,9 @@ export const AmountsSection = () => {
                 {protocolFee && (
                     <div className="flex items-center justify-between">
                         <span>Protocol fee:</span>
-                        <span> {protocolFee} TON</span>
+                        <span>
+                            {protocolFee} {outputCurrency.symbol}
+                        </span>
                     </div>
                 )}
             </div>
