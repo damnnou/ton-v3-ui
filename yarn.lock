@@ -646,11 +646,6 @@
   resolved "https://registry.yarnpkg.com/@rollup/rollup-win32-x64-msvc/-/rollup-win32-x64-msvc-4.18.0.tgz#5d694d345ce36b6ecf657349e03eb87297e68da4"
   integrity sha512-UOo5FdvOL0+eIVTgS4tIdbW+TtnBLWg1YBCcU2KWM7nuNwRz9bksDX1bekJJCpu25N1DVWaCwnT39dVQxzqS8g==
 
-"@skdamn/ton-sdk@^0.5.5":
-  version "0.5.5"
-  resolved "https://registry.yarnpkg.com/@skdamn/ton-sdk/-/ton-sdk-0.5.5.tgz#a03c1f1a0be4db6321d1e3addf78738a55843aab"
-  integrity sha512-HObvXP9zpqXHC4qUlPcgNAgEoI+rdDKgEWsPhmgLzRCTCuvaSjMgtGOAjhqEG7DHOmr9usdFGVC4LUeJBIXiJA==
-
 "@ston-fi/sdk@^0.5.3":
   version "0.5.3"
   resolved "https://registry.yarnpkg.com/@ston-fi/sdk/-/sdk-0.5.3.tgz#da940030c5655268fc729f2066c770d3af71bb2a"

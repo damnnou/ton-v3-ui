@@ -6,6 +6,8 @@ import { usePoolAddress } from "../pool/usePoolAddress";
 import { useEffect, useState } from "react";
 import { Jetton } from "src/constants/jettons";
 import { formatUnits } from "src/utils/formatUnits";
+import { useTonConnect } from "../common/useTonConnect";
+import { CHAIN } from "@tonconnect/ui-react";
 
 interface ExpectedOutputs {
     jettonToReceive: BN;
@@ -25,8 +27,13 @@ export function useExpectedOutputs(
     const [outputs, setOutputs] = useState<ExpectedOutputs>();
     const [isLoading, setIsLoading] = useState(false);
 
-    const jetton0WalletAddress = useJettonWalletAddress({ jettonAddress: tokenIn.address, ownerAddress: ROUTER });
-    const jetton1WalletAddress = useJettonWalletAddress({ jettonAddress: tokenOut.address, ownerAddress: ROUTER });
+    const { network } = useTonConnect();
+
+    const jetton0WalletAddress = useJettonWalletAddress({ jettonAddress: tokenIn.address, ownerAddress: ROUTER[network || CHAIN.MAINNET] });
+    const jetton1WalletAddress = useJettonWalletAddress({
+        jettonAddress: tokenOut.address,
+        ownerAddress: ROUTER[network || CHAIN.MAINNET],
+    });
 
     useEffect(() => {
         if (!jetton0WalletAddress || !jetton1WalletAddress) return;

@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import TokenSelectMenu from "../TokenSelectMenu";
-import { cn } from "../../../lib/cn";
-import { MenuState } from "../../../types/token-menu";
+import { cn } from "src/lib/cn";
+import { MenuState } from "src/types/token-menu";
 import { InputField } from "./InputField";
 import { OutputField } from "./OutputField";
 import { SwitchButton } from "../../ui/SwitchButton";
@@ -11,12 +11,16 @@ import { useDebounce } from "src/hooks/common/useDebounce";
 import { SwapButton } from "../SwapButton";
 import { fromNano } from "ton-core";
 import { useSwapTxParams } from "src/hooks/swap/useSwapTxParams";
+import { useTonConnect } from "src/hooks/common/useTonConnect";
+import { CHAIN } from "@tonconnect/ui-react";
 
 export const AmountsSection = () => {
     const [menuState, setMenuState] = useState<MenuState>(MenuState.CLOSED);
 
-    const [inputCurrency, setInputCurrency] = useState<Jetton>(jettons.TON);
-    const [outputCurrency, setOutputCurrency] = useState<Jetton>(jettons.tSTON);
+    const { network } = useTonConnect();
+
+    const [inputCurrency, setInputCurrency] = useState<Jetton>(jettons[network || CHAIN.MAINNET].TON);
+    const [outputCurrency, setOutputCurrency] = useState<Jetton>(jettons[network || CHAIN.MAINNET].USDT);
 
     const [inputValue, setInputValue] = useState<number>(0);
 
@@ -35,6 +39,12 @@ export const AmountsSection = () => {
     });
 
     const txFee = txParams && fromNano(txParams.gasAmount);
+
+    useEffect(() => {
+        if (!network) return;
+        setInputCurrency(jettons[network].TON);
+        setOutputCurrency(jettons[network].USDT);
+    }, [network]);
 
     return (
         <>
