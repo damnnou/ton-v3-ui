@@ -1,7 +1,7 @@
 import { MessageData } from "@ston-fi/sdk";
-import { CHAIN, useTonConnectModal } from "@tonconnect/ui-react";
+import { useTonConnectModal } from "@tonconnect/ui-react";
 import { ButtonHTMLAttributes } from "react";
-import { ActionButton } from "src/components/ui/ActionButton";
+import { ActionButton } from "src/components/ui/Button";
 import { Spinner } from "src/components/ui/Spinner";
 import { useSendTransaction } from "src/hooks/common/useSendTransaction";
 import { useTonConnect } from "src/hooks/common/useTonConnect";
@@ -11,7 +11,7 @@ interface SwapButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 export const SwapButton = ({ txParams, ...props }: SwapButtonProps) => {
-    const { connected, network } = useTonConnect();
+    const { connected } = useTonConnect();
     const { open } = useTonConnectModal();
 
     const { write, isLoading, isPending } = useSendTransaction(txParams);
@@ -22,9 +22,6 @@ export const SwapButton = ({ txParams, ...props }: SwapButtonProps) => {
                 {props.disabled ? <Spinner className="w-12 h-12" /> : "Connect wallet"}
             </ActionButton>
         );
-
-    if (network === CHAIN.TESTNET)
-        return <ActionButton disabled>{props.disabled ? <Spinner className="w-12 h-12" /> : "Switch to mainnet"}</ActionButton>;
 
     if (!txParams) return <ActionButton disabled>{props.disabled ? <Spinner className="w-12 h-12" /> : "Enter an amount"}</ActionButton>;
 
