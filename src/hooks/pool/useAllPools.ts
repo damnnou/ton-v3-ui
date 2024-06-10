@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { Pool } from "./usePool";
 import { Router } from "src/contracts/Router";
 import { ROUTER } from "src/constants/addresses";
+import { CHAIN } from "@tonconnect/ui-react";
 
 export function useAllPools() {
     const [isLoading, setIsLoading] = useState(false);
@@ -15,12 +16,12 @@ export function useAllPools() {
     const tonApiClient = useTonClient();
 
     useEffect(() => {
-        if (!network || !tonApiClient || isFirstTime) return;
+        if (!tonApiClient || isFirstTime) return;
         setIsFirstTime(true);
 
-        const router = new Router({ tonApiClient: tonApiClient.provider, address: ROUTER[network] });
+        const router = new Router({ tonApiClient: tonApiClient.provider, address: ROUTER[network || CHAIN.MAINNET] });
 
-        const tokenKeys = Object.values(jettons[network]);
+        const tokenKeys = Object.values(jettons[network || CHAIN.MAINNET]);
 
         function getAllCombinations(arr: Jetton[]) {
             const result = [];
