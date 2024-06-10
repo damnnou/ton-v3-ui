@@ -4,7 +4,7 @@ import { cn } from "src/lib/cn";
 import { MenuState } from "src/types/token-menu";
 import { InputField } from "./InputField";
 import { OutputField } from "./OutputField";
-import { SwitchButton } from "../../ui/SwitchButton";
+import { SwitchButton } from "../../ui/Button";
 import { Jetton, jettons } from "src/constants/jettons";
 import { useExpectedOutputs } from "src/hooks/swap/useExpectedOutputs";
 import { useDebounce } from "src/hooks/common/useDebounce";

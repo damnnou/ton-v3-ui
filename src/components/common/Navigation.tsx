@@ -2,6 +2,7 @@ import { NavLink, matchPath, useLocation } from "react-router-dom";
 
 const PATHS = {
     SWAP: "/swap",
+    POOLS: "/pools",
 };
 
 const menuItems = [
@@ -9,6 +10,11 @@ const menuItems = [
         title: "Swap",
         link: "/swap",
         active: [PATHS.SWAP],
+    },
+    {
+        title: "Pools",
+        link: "/pools",
+        active: [PATHS.POOLS],
     },
 ];
 

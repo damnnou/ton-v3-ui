@@ -1,7 +1,7 @@
 import { MessageData } from "@ston-fi/sdk";
 import { useTonConnectModal } from "@tonconnect/ui-react";
 import { ButtonHTMLAttributes } from "react";
-import { ActionButton } from "src/components/ui/ActionButton";
+import { ActionButton } from "src/components/ui/Button";
 import { Spinner } from "src/components/ui/Spinner";
 import { useSendTransaction } from "src/hooks/common/useSendTransaction";
 import { useTonConnect } from "src/hooks/common/useTonConnect";

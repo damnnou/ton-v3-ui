@@ -6,6 +6,7 @@ import "./index.css";
 import App from "./App";
 import { SwapPage } from "./pages/swap";
 import { TonConnectUIProvider } from "@tonconnect/ui-react";
+import PoolsPage from "./pages/pools";
 
 const router = createBrowserRouter([
     {
@@ -17,6 +18,14 @@ const router = createBrowserRouter([
         element: (
             <App>
                 <SwapPage />
+            </App>
+        ),
+    },
+    {
+        path: "/pools",
+        element: (
+            <App>
+                <PoolsPage />
             </App>
         ),
     },

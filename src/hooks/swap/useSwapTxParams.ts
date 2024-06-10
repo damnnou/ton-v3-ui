@@ -4,8 +4,8 @@ import { useTonConnect } from "../common/useTonConnect";
 import { Jetton, jettons } from "src/constants/jettons";
 import { MessageData } from "@ston-fi/sdk";
 import { toNano } from "ton-core";
-import { isTON } from "src/utils/isTON";
-import { parseUnits } from "src/utils/parseUnits";
+import { isTON } from "src/utils/common/isTON";
+import { parseUnits } from "src/utils/common/parseUnits";
 import { CHAIN } from "@tonconnect/ui-react";
 
 enum SwapType {

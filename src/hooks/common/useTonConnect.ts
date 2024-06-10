@@ -1,6 +1,6 @@
 import { CHAIN, useTonConnectUI, useTonWallet } from "@tonconnect/ui-react";
 import { MessageData } from "@ston-fi/sdk";
-import bytesToBase64 from "src/utils/bytesToBase64";
+import bytesToBase64 from "src/utils/common/bytesToBase64";
 
 export type Sender = {
     send: (args: MessageData) => Promise<string>;

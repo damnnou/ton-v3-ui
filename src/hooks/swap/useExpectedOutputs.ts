@@ -2,10 +2,10 @@ import { BN } from "@ston-fi/sdk";
 import { usePoolContract } from "../contracts/usePoolContract";
 import { useJettonWalletAddress } from "../jetton/useJettonWalletAddress";
 import { ROUTER } from "src/constants/addresses";
-import { usePoolAddress } from "../pool/usePoolAddress";
+import { usePool } from "../pool/usePool";
 import { useEffect, useState } from "react";
 import { Jetton } from "src/constants/jettons";
-import { formatUnits } from "src/utils/formatUnits";
+import { formatUnits } from "src/utils/common/formatUnits";
 import { useTonConnect } from "../common/useTonConnect";
 import { CHAIN } from "@tonconnect/ui-react";
 
@@ -30,21 +30,10 @@ export function useExpectedOutputs(
     const { network } = useTonConnect();
 
     const jetton0WalletAddress = useJettonWalletAddress({ jettonAddress: tokenIn.address, ownerAddress: ROUTER[network || CHAIN.MAINNET] });
-    const jetton1WalletAddress = useJettonWalletAddress({
-        jettonAddress: tokenOut.address,
-        ownerAddress: ROUTER[network || CHAIN.MAINNET],
-    });
 
-    useEffect(() => {
-        if (!jetton0WalletAddress || !jetton1WalletAddress) return;
-        console.log("Router's jetton wallets: ");
-        console.log(tokenIn.symbol, " - ", jetton0WalletAddress?.toString(true));
-        console.log(tokenOut.symbol, " - ", jetton1WalletAddress?.toString(true));
-    }, [jetton0WalletAddress, jetton1WalletAddress]);
+    const poolData = usePool({ token0: tokenIn.address, token1: tokenOut.address });
 
-    const poolAddress = usePoolAddress({ token0: jetton0WalletAddress, token1: jetton1WalletAddress });
-
-    const pool = usePoolContract(poolAddress);
+    const pool = usePoolContract(poolData?.address);
 
     useEffect(() => {
         if (!pool || !jetton0WalletAddress || !amount) return;
@@ -58,7 +47,7 @@ export function useExpectedOutputs(
         }, 5000);
 
         return () => clearTimeout(timeout);
-    }, [pool, amount, jetton0WalletAddress, tokenIn.decimals]);
+    }, [pool, amount, jetton0WalletAddress, tokenIn.decimals, tokenIn.address]);
 
     if (!outputs) {
         return {
