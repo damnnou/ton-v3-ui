@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useRouterContract } from "../contracts/useRouterContract";
 import { useTonConnect } from "../common/useTonConnect";
-import { Jetton } from "src/constants/jettons";
-import { MessageData, pTON } from "@ston-fi/sdk";
+import { Jetton, jettons } from "src/constants/jettons";
+import { MessageData } from "@ston-fi/sdk";
 import { isTON } from "src/utils/common/isTON";
 import { parseUnits } from "src/utils/common/parseUnits";
 import { CHAIN } from "@tonconnect/ui-react";
@@ -57,7 +57,7 @@ export function useProvideLiquidityTxParams({
                 Promise.all([
                     router.buildProvideLiquidityTonTxParams({
                         userWalletAddress: wallet,
-                        proxyTonAddress: pTON.v1.address,
+                        proxyTonAddress: jettons[network].TON.address,
                         sendAmount: toNano(offerAmount),
                         otherTokenAddress: askJetton.address,
                         minLpOut: new TonWeb.utils.BN("1"), // TODO: get minLpOut
@@ -66,7 +66,7 @@ export function useProvideLiquidityTxParams({
                         userWalletAddress: wallet,
                         sendTokenAddress: askJetton.address,
                         sendAmount: parseUnits(minAskAmount, askJetton.decimals),
-                        otherTokenAddress: pTON.v1.address,
+                        otherTokenAddress: jettons[network].TON.address,
                         minLpOut: new TonWeb.utils.BN("1"), // TODO: get minLpOut
                     }),
                 ]).then(setTxsParams);
@@ -76,7 +76,7 @@ export function useProvideLiquidityTxParams({
                 Promise.all([
                     router.buildProvideLiquidityTonTxParams({
                         userWalletAddress: wallet,
-                        proxyTonAddress: pTON.v1.address,
+                        proxyTonAddress: jettons[network].TON.address,
                         sendAmount: toNano(offerAmount),
                         otherTokenAddress: askJetton.address,
                         minLpOut: new TonWeb.utils.BN("1"), // TODO: get minLpOut
@@ -85,7 +85,7 @@ export function useProvideLiquidityTxParams({
                         userWalletAddress: wallet,
                         sendTokenAddress: offerJetton.address,
                         sendAmount: parseUnits(offerAmount, offerJetton.decimals),
-                        otherTokenAddress: pTON.v1.address,
+                        otherTokenAddress: jettons[network].TON.address,
                         minLpOut: new TonWeb.utils.BN("1"), // TODO: get minLpOut
                     }),
                 ]).then(setTxsParams);
