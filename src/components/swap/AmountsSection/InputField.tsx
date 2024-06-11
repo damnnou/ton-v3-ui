@@ -12,7 +12,7 @@ export const InputField: React.FC<InputFieldProps> = ({ isLoading, onClick, onCh
     };
 
     return (
-        <label className="flex w-full items-center min-h-[104px] h-full border-2 border-border-light rounded-2xl bg-dark">
+        <label className="flex w-full items-center h-[104px] border-2 border-border-light rounded-2xl bg-dark">
             <div
                 onClick={onClick}
                 className="flex w-1/2 p-4 ml-3 rounded-xl h-3/4 hover:bg-light items-center gap-4 cursor-pointer transition-all ease-in-out duration-300"

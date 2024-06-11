@@ -3,7 +3,7 @@ import { MessageData } from "@ston-fi/sdk";
 import bytesToBase64 from "src/utils/common/bytesToBase64";
 
 export type Sender = {
-    send: (args: MessageData) => Promise<string>;
+    send: (args: MessageData[]) => Promise<string>;
 };
 
 export function useTonConnect(): {
@@ -17,20 +17,17 @@ export function useTonConnect(): {
 
     return {
         sender: {
-            send: async (args: MessageData) => {
-                console.log("sending message: ", {
-                    address: args.to.toString(),
-                    amount: args.gasAmount.toString(),
-                    payload: bytesToBase64(await args.payload.toBoc()),
-                });
+            send: async (messagesData: MessageData[]) => {
+                const messages = await Promise.all(
+                    messagesData.map(async (args) => ({
+                        address: args.to.toString(),
+                        amount: args.gasAmount.toString(),
+                        payload: bytesToBase64(await args.payload.toBoc()),
+                    }))
+                );
+                console.log("sending messages: ", messages);
                 const tx = await tonConnectUI.sendTransaction({
-                    messages: [
-                        {
-                            address: args.to.toString(),
-                            amount: args.gasAmount.toString(),
-                            payload: bytesToBase64(await args.payload.toBoc()),
-                        },
-                    ],
+                    messages,
                     validUntil: Date.now() + 5 * 60 * 1000, // 5 min
                 });
 

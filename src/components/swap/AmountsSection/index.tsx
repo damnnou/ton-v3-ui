@@ -38,7 +38,7 @@ export const AmountsSection = () => {
         minAskAmount: minReceivedAmount,
     });
 
-    const txFee = txParams && fromNano(txParams.gasAmount);
+    const txFee = txParams && fromNano(txParams[0].gasAmount);
 
     useEffect(() => {
         if (!network) return;

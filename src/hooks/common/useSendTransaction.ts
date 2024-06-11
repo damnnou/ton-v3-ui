@@ -3,7 +3,7 @@ import { useTonConnect } from "./useTonConnect";
 import { useEffect, useState } from "react";
 import { useTonClient } from "./useTonClient";
 
-export function useSendTransaction(txParams: MessageData | undefined) {
+export function useSendTransaction(txParams: MessageData[] | undefined) {
     const client = useTonClient();
     const { sender, wallet } = useTonConnect();
 

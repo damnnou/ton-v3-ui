@@ -2,7 +2,7 @@ import { BN } from "@ston-fi/sdk";
 import { usePoolContract } from "../contracts/usePoolContract";
 import { useJettonWalletAddress } from "../jetton/useJettonWalletAddress";
 import { ROUTER } from "src/constants/addresses";
-import { usePool } from "../pool/usePool";
+import { usePoolByTokens } from "../pool/usePool";
 import { useEffect, useState } from "react";
 import { Jetton } from "src/constants/jettons";
 import { formatUnits } from "src/utils/common/formatUnits";
@@ -31,7 +31,7 @@ export function useExpectedOutputs(
 
     const jetton0WalletAddress = useJettonWalletAddress({ jettonAddress: tokenIn.address, ownerAddress: ROUTER[network || CHAIN.MAINNET] });
 
-    const poolData = usePool({ token0: tokenIn.address, token1: tokenOut.address });
+    const poolData = usePoolByTokens({ token0: tokenIn.address, token1: tokenOut.address });
 
     const pool = usePoolContract(poolData?.address);
 

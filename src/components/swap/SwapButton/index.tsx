@@ -7,7 +7,7 @@ import { useSendTransaction } from "src/hooks/common/useSendTransaction";
 import { useTonConnect } from "src/hooks/common/useTonConnect";
 
 interface SwapButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-    txParams: MessageData | undefined;
+    txParams: MessageData[] | undefined;
 }
 
 export const SwapButton = ({ txParams, ...props }: SwapButtonProps) => {

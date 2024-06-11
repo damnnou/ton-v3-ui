@@ -93,5 +93,5 @@ export function useSwapTxParams({
         }
     }, [router, wallet, askJetton, offerJetton, offerAmount, minAskAmount, network]);
 
-    return txParams;
+    if (txParams) return [txParams];
 }

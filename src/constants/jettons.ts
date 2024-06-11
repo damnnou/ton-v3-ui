@@ -1,6 +1,7 @@
 import TONLogo from "src/assets/jettons/ton.svg";
 import USDTLogo from "src/assets/jettons/usdt.svg";
 import NOTLogo from "src/assets/jettons/not.png";
+import SKATELogo from "src/assets/jettons/skate.png";
 import ALGBLogo from "src/assets/algebra-logo.svg";
 import { AddressType } from "tonweb";
 import { CHAIN } from "@tonconnect/ui-react";
@@ -53,10 +54,10 @@ export const jettons = {
             logo: ALGBLogo,
             decimals: 9,
         },
-        UKWN: {
-            symbol: "UKWN",
-            address: "kQBTUimnbIuh8gZRvuDMHiRUG0x3-sErqJTy9Qit74RBQkqQ",
-            logo: ALGBLogo,
+        SKATE: {
+            symbol: "SKATE",
+            address: "EQAI2_tWxzHj_u5b-ujdnC3-Yd1XFriS71mLhS3E8jpYeEhR",
+            logo: SKATELogo,
             decimals: 9,
         },
     },

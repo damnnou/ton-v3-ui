@@ -3,7 +3,8 @@ import { AddressType } from "tonweb";
 import { useRouterContract } from "../contracts/useRouterContract";
 import { Jetton } from "src/constants/jettons";
 import { BN } from "@ston-fi/sdk";
-import { useJetton } from "../jetton/useJetton";
+import { useJetton, useJettonByJettonWallet } from "../jetton/useJetton";
+import { usePoolContract } from "../contracts/usePoolContract";
 
 export interface Pool {
     address: AddressType | undefined;
@@ -21,7 +22,13 @@ export interface Pool {
     collectedToken1ProtocolFee: BN;
 }
 
-export function usePool({ token0, token1 }: { token0: AddressType | undefined; token1: AddressType | undefined }) {
+export function usePoolByTokens({
+    token0,
+    token1,
+}: {
+    token0: AddressType | undefined;
+    token1: AddressType | undefined;
+}): Pool | undefined {
     const [pool, setPool] = useState<Pool>();
 
     const router = useRouterContract();
@@ -37,11 +44,29 @@ export function usePool({ token0, token1 }: { token0: AddressType | undefined; t
 
             if (!pool) return;
             const poolData = await pool.getData();
-            return { ...poolData, token0: jetton0, token1: jetton1, address: pool.address };
+            return { ...poolData, token0: jetton0, token1: jetton1, address: pool.address?.toString(true) };
         };
 
         getPoolData().then(setPool);
     }, [jetton0, jetton1, router]);
 
     return pool;
+}
+
+export function usePool(address: AddressType | undefined): Pool | undefined {
+    const [poolData, setPoolData] = useState<any>();
+    const poolContract = usePoolContract(address);
+
+    const token0 = useJettonByJettonWallet(poolData?.token0WalletAddress);
+    const token1 = useJettonByJettonWallet(poolData?.token1WalletAddress);
+
+    useEffect(() => {
+        if (!poolContract) return;
+
+        poolContract.getData().then(setPoolData);
+    }, [poolContract]);
+
+    if (!token0 || !token1) return;
+
+    return { ...poolData, token0, token1, address: poolContract?.address };
 }
