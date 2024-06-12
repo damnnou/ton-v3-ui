@@ -55,7 +55,7 @@ export function useExpectedOutputs(
             protocolFee: undefined,
             isLoading,
         };
-    } else if (!amount) {
+    } else if (!amount || !poolData) {
         return {
             expectedOutput: undefined,
             protocolFee: undefined,

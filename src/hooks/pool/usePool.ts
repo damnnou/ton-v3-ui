@@ -47,7 +47,9 @@ export function usePoolByTokens({
             return { ...poolData, token0: jetton0, token1: jetton1, address: pool.address?.toString(true) };
         };
 
-        getPoolData().then(setPool);
+        getPoolData()
+            .then(setPool)
+            .catch(() => setPool(undefined));
     }, [jetton0, jetton1, router]);
 
     return pool;
