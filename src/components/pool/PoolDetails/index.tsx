@@ -10,9 +10,9 @@ export const PoolDetails = ({ pool }: { pool: Pool }) => {
     /* tokens sum TVL */
     const TVL = formatUnits(pool.reserve0, pool.token0.decimals) + formatUnits(pool.reserve1, pool.token1.decimals);
     return (
-        <div className="w-full flex flex-col gap-4 bg-light border-2 border-border-light rounded-2xl p-6 text-lg">
-            <div className="flex flex-col gap-2 items-start">
-                <p className="opacity-50">Details</p>
+        <div className="w-full flex flex-col gap-4 bg-light border-2 border-border-light max-sm:p-2 rounded-2xl p-[18px] text-lg">
+            <div className="flex flex-col gap-2 items-start bg-dark rounded-xl p-4">
+                <p className="opacity-50">Pool Details</p>
                 <div className="flex w-full justify-between">
                     <p>LP Fee</p>
                     <p>{(pool.lpFee / 100).toString()} %</p>
@@ -23,17 +23,17 @@ export const PoolDetails = ({ pool }: { pool: Pool }) => {
                 </div>
             </div>
             <hr className="border-border-light" />
-            <div className="flex flex-col gap-2 items-start">
+            <div className="flex flex-col gap-2 items-start bg-dark rounded-xl p-4">
                 <p className="opacity-50">Token rates</p>
                 <p>
-                    1 {pool.token0.symbol} = {token0Rate} {pool.token1.symbol}
+                    1 {pool.token0.symbol} = {token0Rate.toFixed(4)} {pool.token1.symbol}
                 </p>
                 <p>
-                    1 {pool.token1.symbol} = {token1Rate} {pool.token0.symbol}
+                    1 {pool.token1.symbol} = {token1Rate.toFixed(4)} {pool.token0.symbol}
                 </p>
             </div>
             <hr className="border-border-light" />
-            <div className="flex flex-col gap-2 items-start">
+            <div className="flex flex-col gap-2 items-start bg-dark rounded-xl p-4">
                 <p className="opacity-50">Pool reserve</p>
                 <div className="flex w-full justify-between">
                     <p>{pool.token0.symbol}</p>
@@ -45,7 +45,7 @@ export const PoolDetails = ({ pool }: { pool: Pool }) => {
                 </div>
             </div>
             <hr className="border-border-light" />
-            <div className="flex flex-col gap-2 items-start">
+            <div className="flex flex-col gap-2 items-start bg-dark rounded-xl p-4">
                 <p className="opacity-50">Fees</p>
                 <div className="flex w-full justify-between">
                     <p>Protocol fee</p>
