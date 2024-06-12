@@ -42,7 +42,7 @@ const PoolsList = () => {
         <div className="flex flex-col gap-4">
             <PoolsTable
                 columns={poolsColumns}
-                data={formattedPools}
+                data={formattedPools as any}
                 defaultSortingID={"tvlUSD"}
                 link={"pool"}
                 showPagination={true}

@@ -26,7 +26,7 @@ export const AddLiquidity = ({ jetton0, jetton1 }: { jetton0: Jetton; jetton1: J
     const { write, isLoading: isProviding } = useSendTransaction(txsParams);
 
     return (
-        <div className="w-[500px] h-[350px] flex flex-col gap-4 p-4 bg-light rounded-2xl border-2 border-border-light">
+        <div className="relative w-full max-w-[500px] rounded-2xl transition-all duration-300 bg-light delay-50 overflow-hidden shadow-2xl shadow-purple-500/10 flex flex-col sm:gap-4 gap-2 border-2 border-border-light sm:p-4 sm:rounded-3xl sm:bg-light p-2">
             <InputField
                 onClick={() => null}
                 onChange={setInputValue}

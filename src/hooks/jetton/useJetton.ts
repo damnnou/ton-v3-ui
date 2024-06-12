@@ -4,6 +4,7 @@ import { useTonConnect } from "../common/useTonConnect";
 import { useJettonWalletContract } from "../contracts/useJettonWalletContract";
 import { Jetton, jettons } from "src/constants/jettons";
 import TonWeb from "tonweb";
+import { CHAIN } from "@tonconnect/ui-react";
 
 export function useJettonByJettonWallet(jettonWalletAddress: AddressType | undefined) {
     const [jettonAddress, setJettonAddress] = useState<AddressType>();
@@ -26,8 +27,8 @@ export function useJetton(jettonAddress: AddressType | undefined) {
     const { network } = useTonConnect();
 
     useEffect(() => {
-        if (!network || !jettonAddress) return;
-        Object.entries(jettons[network]).map(
+        if (!jettonAddress) return;
+        Object.entries(jettons[network || CHAIN.MAINNET]).map(
             ([, jetton]) =>
                 new TonWeb.utils.Address(jetton.address).toString(false) === new TonWeb.utils.Address(jettonAddress).toString(false) &&
                 setJetton(jetton)

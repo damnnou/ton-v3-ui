@@ -26,12 +26,12 @@ const Navigation = () => {
 
     return (
         <nav className="w-1/3">
-            <ul className="flex justify-center gap-1 rounded-full whitespace-nowrap">
+            <ul className="flex justify-center gap-2 whitespace-nowrap">
                 {menuItems.map((item) => (
                     <NavLink
                         key={`nav-item-${item.link}`}
                         to={item.link}
-                        className={`${setNavlinkClasses(item.active)} py-2 px-4 rounded-2xl font-semibold select-none duration-200`}
+                        className={`${setNavlinkClasses(item.active)} py-2 px-4 rounded-xl font-semibold select-none duration-200`}
                     >
                         {item.title}
                     </NavLink>

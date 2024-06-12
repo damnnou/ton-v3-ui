@@ -18,7 +18,7 @@ export const RemoveLiquidity = ({ jetton0, jetton1, position }: { jetton0: Jetto
     const { write, isLoading } = useSendTransaction(txsParams);
 
     return (
-        <div className="w-[500px] flex flex-col gap-4 rounded-2xl bg-light border-2 border-border-light p-4 justify-between">
+        <div className="relative w-full max-w-[500px] rounded-2xl transition-all duration-300 bg-light delay-50 overflow-hidden shadow-2xl shadow-purple-500/10 flex flex-col sm:gap-4 gap-4 border-2 border-border-light sm:p-4 sm:rounded-3xl sm:bg-light p-2">
             <input
                 className="w-full h-20 border-2 border-border-light rounded-2xl bg-dark outline-none px-6 text-2xl"
                 placeholder="0.00"
@@ -29,7 +29,7 @@ export const RemoveLiquidity = ({ jetton0, jetton1, position }: { jetton0: Jetto
                 max={100}
             />
             <ul className="flex gap-4 w-full items-center justify-between">
-                {[10, 25, 50, 75, 100].map((v) => (
+                {[10, 25, 50, 100].map((v) => (
                     <li key={v}>
                         <Button variant={v === percent ? "iconActive" : "icon"} onClick={() => setPercent(v)}>
                             {v}%
@@ -37,7 +37,7 @@ export const RemoveLiquidity = ({ jetton0, jetton1, position }: { jetton0: Jetto
                     </li>
                 ))}
             </ul>
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-4 px-2">
                 <div className="flex justify-between">
                     <div>{`${jetton0.symbol} provided`}</div>
                     <div>{formatUnits(position.amount0, jetton0.decimals)}</div>
