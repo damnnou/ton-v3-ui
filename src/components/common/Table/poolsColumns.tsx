@@ -1,10 +1,9 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { HeaderItem } from "./common";
-// import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
-// import { formatPercent } from "@/utils/common/formatPercent";
 import { Jetton } from "src/constants/jettons";
 import { AddressType } from "@ston-fi/sdk";
 import { formatUSD } from "src/utils/common/formatUSD";
+import { JettonLogo } from "../JettonLogo";
 
 interface Pair {
     token0: Jetton;
@@ -26,33 +25,22 @@ interface Pool {
 }
 
 const PoolPair = ({ pair, fee }: Pool) => {
-    const currencyA = pair.token0;
-    const currencyB = pair.token1;
+    const jettonA = pair.token0;
+    const jettonB = pair.token1;
 
-    if (!currencyA || !currencyB) return null;
+    if (!jettonA || !jettonB) return null;
 
     return (
         <div className="flex items-center gap-4 ml-2">
             <div className="flex">
-                <img className="rounded-full" src={currencyA.logo} width={30} height={30} />
-                <img className="rounded-full -ml-2" src={currencyB.logo} width={30} height={30} />
+                <JettonLogo jetton={jettonA} size={30} />
+                <JettonLogo className="-ml-2" jetton={jettonB} size={30} />
             </div>
-            <div>{`${currencyA.symbol} - ${currencyB.symbol}`}</div>
+            <div>{`${jettonA.symbol} - ${jettonB.symbol}`}</div>
             <div className="bg-primary-red/30 text-pink-300 rounded-xl px-2 py-1 text-sm">{`${fee / 100}%`}</div>
         </div>
     );
 };
-
-// const Plugins = ({ poolId }: { poolId: AddressType }) => {
-//     const { dynamicFeePlugin, farmingPlugin } = usePoolPlugins(poolId);
-
-//     return (
-//         <div className="flex gap-2">
-//             {dynamicFeePlugin && <DynamicFeePluginIcon />}
-//             {farmingPlugin && <FarmingPluginIcon />}
-//         </div>
-//     );
-// };
 
 // const AvgAPR = ({
 //     children,
@@ -88,12 +76,6 @@ export const poolsColumns: ColumnDef<Pool>[] = [
                 .toLowerCase()
                 .includes(value),
     },
-    // {
-    //     accessorKey: "plugins",
-    //     header: () => <HeaderItem>Plugins</HeaderItem>,
-    //     cell: ({ row }) => <Plugins poolId={row.original.id} />,
-    //     filterFn: (v) => v.original.hasActiveFarming === true,
-    // },
     {
         accessorKey: "tvlUSD",
         header: ({ column }) => (

@@ -1,10 +1,11 @@
 import { AddressType } from "@ston-fi/sdk";
 import { useEffect, useState } from "react";
-import { useTonConnect } from "../common/useTonConnect";
 import { useJettonWalletContract } from "../contracts/useJettonWalletContract";
-import { Jetton, jettons } from "src/constants/jettons";
-import TonWeb from "tonweb";
+import { Jetton } from "src/constants/jettons";
+import { useTonConsoleClient } from "../common/useTonConsoleClient";
+import { useTokensState } from "src/state/tokensStore";
 import { CHAIN } from "@tonconnect/ui-react";
+import { useTonConnect } from "../common/useTonConnect";
 
 export function useJettonByJettonWallet(jettonWalletAddress: AddressType | undefined) {
     const [jettonAddress, setJettonAddress] = useState<AddressType>();
@@ -24,16 +25,29 @@ export function useJettonByJettonWallet(jettonWalletAddress: AddressType | undef
 
 export function useJetton(jettonAddress: AddressType | undefined) {
     const [jetton, setJetton] = useState<Jetton>();
+    const { importedTokens } = useTokensState();
+    const client = useTonConsoleClient();
     const { network } = useTonConnect();
 
     useEffect(() => {
-        if (!jettonAddress) return;
-        Object.entries(jettons[network || CHAIN.MAINNET]).map(
-            ([, jetton]) =>
-                new TonWeb.utils.Address(jetton.address).toString(false) === new TonWeb.utils.Address(jettonAddress).toString(false) &&
-                setJetton(jetton)
-        );
-    }, [network, jettonAddress]);
+        if (!jettonAddress || !client) return;
+        const allTokens = Object.values(importedTokens[network || CHAIN.MAINNET]);
+        const token = allTokens.find((jetton) => jetton.address === jettonAddress);
+        if (token) {
+            setJetton(token);
+            return;
+        }
+
+        client.jettons.getJettonInfo(jettonAddress.toString(false)).then(({ metadata }) => {
+            setJetton({
+                name: metadata.name,
+                address: jettonAddress,
+                symbol: metadata.symbol === "pTON" ? "TON" : metadata.symbol === "☯" ? "tSTON" : metadata.symbol,
+                image: metadata.image,
+                decimals: Number(metadata.decimals),
+            });
+        });
+    }, [jettonAddress, client, importedTokens, network]);
 
     return jetton;
 }

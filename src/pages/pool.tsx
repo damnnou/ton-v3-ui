@@ -29,8 +29,8 @@ const PoolPage = () => {
         <div className="w-full flex flex-col gap-6 py-20 animate-fade-in">
             <div className="flex items-center gap-4">
                 <div className="flex">
-                    <img className="rounded-full" src={jetton0.logo} width={42} height={42} />
-                    <img className="rounded-full -ml-2" src={jetton1.logo} width={42} height={42} />
+                    <img className="rounded-full" src={jetton0.image} width={42} height={42} />
+                    <img className="rounded-full -ml-2" src={jetton1.image} width={42} height={42} />
                 </div>
                 <h2 className="text-3xl mr-auto">
                     {jetton0?.symbol} / {jetton1?.symbol}
