@@ -8,6 +8,8 @@ import { SwapPage } from "./pages/swap";
 import { TonConnectUIProvider } from "@tonconnect/ui-react";
 import PoolsPage from "./pages/pools";
 import PoolPage from "./pages/pool";
+import CreatePoolPage from "./pages/create-pool";
+import { TonClientProvider } from "./hooks/common/useTonClient";
 
 const router = createBrowserRouter([
     {
@@ -38,6 +40,14 @@ const router = createBrowserRouter([
             </App>
         ),
     },
+    {
+        path: "/create-pool",
+        element: (
+            <App>
+                <CreatePoolPage />
+            </App>
+        ),
+    },
 ]);
 
 const manifestUrl = "https://damnnou.github.io/ton-manifest/ton-manifest.json";
@@ -45,7 +55,9 @@ const manifestUrl = "https://damnnou.github.io/ton-manifest/ton-manifest.json";
 ReactDOM.createRoot(document.getElementById("root")!).render(
     <React.StrictMode>
         <TonConnectUIProvider manifestUrl={manifestUrl}>
-            <RouterProvider router={router} />
+            <TonClientProvider>
+                <RouterProvider router={router} />
+            </TonClientProvider>
         </TonConnectUIProvider>
     </React.StrictMode>
 );

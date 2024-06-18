@@ -31,7 +31,7 @@ export const RemoveLiquidity = ({ jetton0, jetton1, position }: { jetton0: Jetto
             <ul className="flex gap-4 w-full items-center justify-between">
                 {[10, 25, 50, 100].map((v) => (
                     <li key={v}>
-                        <Button variant={v === percent ? "iconActive" : "icon"} onClick={() => setPercent(v)}>
+                        <Button className="rounded-xl" variant={v === percent ? "iconActive" : "icon"} onClick={() => setPercent(v)}>
                             {v}%
                         </Button>
                     </li>

@@ -29,7 +29,7 @@ export const jettons: Jettons = {
             name: "Tether USD",
             symbol: "USDT",
             address: "EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs",
-            image: "https://cache.tonapi.io/imgproxy/Az2gjbWFgs5Oy-cSWnMocj3RNufMUFdaz1rBBmyf4ag/rs:fill:200:200:1/g:no/aHR0cHM6Ly9zMi5jb2lubWFya2V0Y2FwLmNvbS9zdGF0aWMvaW1nL2NvaW5zLzY0eDY0LzgyNS5wbmc.webp",
+            image: "https://cache.tonapi.io/imgproxy/T3PB4s7oprNVaJkwqbGg54nexKE0zzKhcrPv8jcWYzU/rs:fill:200:200:1/g:no/aHR0cHM6Ly90ZXRoZXIudG8vaW1hZ2VzL2xvZ29DaXJjbGUucG5n.webp",
             decimals: 6,
         },
         NOT: {
@@ -51,23 +51,16 @@ export const jettons: Jettons = {
         USDT: {
             name: "Tether USD",
             symbol: "USDT",
-            address: "kQBmksCKED7t6zEsOE_MDGCwPuWxHQoVolut6pG0cF6m8hDF",
-            image: "https://cache.tonapi.io/imgproxy/Az2gjbWFgs5Oy-cSWnMocj3RNufMUFdaz1rBBmyf4ag/rs:fill:200:200:1/g:no/aHR0cHM6Ly9zMi5jb2lubWFya2V0Y2FwLmNvbS9zdGF0aWMvaW1nL2NvaW5zLzY0eDY0LzgyNS5wbmc.webp",
-            decimals: 9,
-        },
-        tSTON: {
-            name: "tSTON",
-            symbol: "tSTON",
-            address: "kQCH-yP4S3nA_j7K7EIV1QIhVTWMyNJfxeYzacUH76ks2q6P",
-            image: "https://cache.tonapi.io/imgproxy/ig5IfnaDFWaPkqP_I6QuyQhRouy8OMnLyCvE2FutgMo/rs:fill:200:200:1/g:no/aHR0cHM6Ly9zdC50b25veC5vcmcvMS5wbmc.webp",
-            decimals: 9,
+            address: "kQDy_cw29BM7O2tb4r4178LGWELtKzb9Xv4Fs3C005u9Sv55",
+            image: "https://cache.tonapi.io/imgproxy/T3PB4s7oprNVaJkwqbGg54nexKE0zzKhcrPv8jcWYzU/rs:fill:200:200:1/g:no/aHR0cHM6Ly90ZXRoZXIudG8vaW1hZ2VzL2xvZ29DaXJjbGUucG5n.webp",
+            decimals: 6,
         },
         SKATE: {
             name: "SKATE",
             symbol: "SKATE",
-            address: "EQAI2_tWxzHj_u5b-ujdnC3-Yd1XFriS71mLhS3E8jpYeEhR",
-            image: "https://cache.tonapi.io/imgproxy/Czn0LmpeHRodKq9xf-toVTQ4k0leDC-aeRri7S0x07s/rs:fill:200:200:1/g:no/aHR0cHM6Ly9pLnBvc3RpbWcuY2MvUlpNeWRqcm4vYXNkLnBuZw.webp",
-            decimals: 9,
+            address: "EQBptrMzgf7A2IqEDwC6afTQ0faWVndPzH9-aZuugxLzOqNW",
+            image: "https://cache.tonapi.io/imgproxy/v1LRvf3pIQp6DEz-Itr8EH9zVsEI93LQKXejlkSH4kM/rs:fill:200:200:1/g:no/aHR0cHM6Ly9pLnBvc3RpbWcuY2MvR21xOXdic3QvbG9nby5wbmc.webp",
+            decimals: 18,
         },
     },
 };

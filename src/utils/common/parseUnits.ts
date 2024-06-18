@@ -5,5 +5,5 @@ const {
 } = TonWeb;
 
 export function parseUnits(amount: number, decimals: number): typeof BN {
-    return new BN(amount * 10 ** decimals);
+    return new BN(BigInt(Math.round(amount * 10 ** decimals)));
 }

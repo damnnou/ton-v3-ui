@@ -28,8 +28,8 @@ export function usePoolByTokens({
 }: {
     token0: AddressType | undefined;
     token1: AddressType | undefined;
-}): Pool | undefined {
-    const [pool, setPool] = useState<Pool>();
+}): Pool | null | undefined {
+    const [pool, setPool] = useState<Pool | null>();
 
     const router = useRouterContract();
 
@@ -38,6 +38,7 @@ export function usePoolByTokens({
 
     useEffect(() => {
         if (!jetton0 || !jetton1 || !router) return;
+        setPool(undefined);
 
         const getPoolData = async () => {
             const pool = await router.getPool({ token0: jetton0.address, token1: jetton1.address });
@@ -49,7 +50,7 @@ export function usePoolByTokens({
 
         getPoolData()
             .then(setPool)
-            .catch(() => setPool(undefined));
+            .catch(() => setPool(null));
     }, [jetton0, jetton1, router]);
 
     return pool;

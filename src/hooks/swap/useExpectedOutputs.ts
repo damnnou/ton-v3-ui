@@ -8,6 +8,7 @@ import { Jetton } from "src/constants/jettons";
 import { formatUnits } from "src/utils/common/formatUnits";
 import { useTonConnect } from "../common/useTonConnect";
 import { CHAIN } from "@tonconnect/ui-react";
+import { parseUnits } from "src/utils/common/parseUnits";
 
 interface ExpectedOutputs {
     jettonToReceive: BN;
@@ -40,7 +41,7 @@ export function useExpectedOutputs(
         setIsLoading(true);
 
         const timeout = setInterval(() => {
-            pool.getExpectedOutputs({ jettonWallet: jetton0WalletAddress, amount: amount * 10 ** tokenIn.decimals })
+            pool.getExpectedOutputs({ jettonWallet: jetton0WalletAddress, amount: parseUnits(amount, tokenIn.decimals) })
                 .then(setOutputs)
                 .catch(() => setOutputs(undefined))
                 .finally(() => setIsLoading(false));

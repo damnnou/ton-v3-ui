@@ -17,7 +17,7 @@ export function useJettonByJettonWallet(jettonWalletAddress: AddressType | undef
     useEffect(() => {
         if (!jettonWallet) return;
 
-        jettonWallet.getData().then((data) => setJettonAddress(data.jettonMinterAddress.toString(false)));
+        jettonWallet.getData().then((data) => setJettonAddress(data.jettonMinterAddress));
     }, [jettonWallet]);
 
     return jetton;
@@ -32,7 +32,7 @@ export function useJetton(jettonAddress: AddressType | undefined) {
     useEffect(() => {
         if (!jettonAddress || !client) return;
         const allTokens = Object.values(importedTokens[network || CHAIN.MAINNET]);
-        const token = allTokens.find((jetton) => jetton.address === jettonAddress);
+        const token = allTokens.find((jetton) => jetton.address.toString(false) === jettonAddress.toString(false));
         if (token) {
             setJetton(token);
             return;

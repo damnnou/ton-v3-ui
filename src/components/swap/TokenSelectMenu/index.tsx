@@ -8,7 +8,7 @@ import { CHAIN } from "@tonconnect/ui-react";
 import { useTokensState } from "src/state/tokensStore";
 import { JettonLogo } from "src/components/common/JettonLogo";
 import { Input } from "src/components/ui/Input";
-import { Search } from "lucide-react";
+import { Check, Copy, Search } from "lucide-react";
 import { Address } from "ton-core";
 import { useJetton } from "src/hooks/jetton/useJetton";
 import { useJettonBalance } from "src/hooks/jetton/useJettonBalance";
@@ -97,19 +97,31 @@ const TokenSelectMenu: React.FC<TokenSelectMenuProps> = ({ onClick, onSelect, se
 };
 
 const JettonRow = ({ onSelect, isSelected, jetton }: { onSelect: (jetton: Jetton) => void; isSelected: boolean; jetton: Jetton }) => {
+    const [isCopied, setIsCopied] = useState(false);
     const balance = useJettonBalance(jetton.address);
+
+    const handleCopy = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        e.stopPropagation();
+        navigator.clipboard.writeText(jetton.address.toString(true)).then(() => {
+            setIsCopied(true);
+            setTimeout(() => setIsCopied(false), 3000);
+        });
+    };
 
     return (
         <li
             onClick={() => !isSelected && onSelect(jetton)}
             className={cn(
-                "flex items-center gap-4 w-full px-8 py-3 transition-all ease-in-out duration-300 ",
+                "flex items-center gap-4 w-full px-8 py-3 transition-all ease-in-out duration-300 group",
                 isSelected ? "bg-div-disabled text-text-disabled cursor-not-allowed hover:bg-div-disabled" : "hover:bg-dark cursor-pointer"
             )}
             key={jetton.symbol}
         >
             <JettonLogo jetton={jetton} size={32} />
             <span className="text-token-select">{jetton.symbol}</span>
+            <button className="invisible group-hover:visible" onClick={handleCopy}>
+                {isCopied ? <Check opacity={0.5} size={16} /> : <Copy opacity={0.8} size={16} />}
+            </button>
             {balance === undefined ? (
                 <Skeleton className="ml-auto w-12 h-6" />
             ) : (

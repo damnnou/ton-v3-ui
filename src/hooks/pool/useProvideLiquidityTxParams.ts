@@ -1,3 +1,4 @@
+import { formatUnits } from "src/utils/common/formatUnits";
 import { useEffect, useState } from "react";
 import { useRouterContract } from "../contracts/useRouterContract";
 import { useTonConnect } from "../common/useTonConnect";
@@ -52,13 +53,25 @@ export function useProvideLiquidityTxParams({
 
         const tokenTypes = getTokenTypes(offerJetton, askJetton, network);
 
+        console.log(tokenTypes);
+        console.log(
+            "providing",
+            formatUnits(parseUnits(offerAmount, offerJetton.decimals).toString(), offerJetton.decimals),
+            offerJetton.symbol
+        );
+        console.log(
+            "providing",
+            formatUnits(parseUnits(minAskAmount, askJetton.decimals).toString(), askJetton.decimals),
+            askJetton.symbol
+        );
+
         switch (tokenTypes) {
             case TokenTypes.TON_TO_JETTON:
                 Promise.all([
                     router.buildProvideLiquidityTonTxParams({
                         userWalletAddress: wallet,
                         proxyTonAddress: jettons[network].TON.address,
-                        sendAmount: toNano(offerAmount),
+                        sendAmount: new TonWeb.utils.BN(toNano(offerAmount)),
                         otherTokenAddress: askJetton.address,
                         minLpOut: new TonWeb.utils.BN("1"), // TODO: get minLpOut
                     }),
@@ -77,8 +90,8 @@ export function useProvideLiquidityTxParams({
                     router.buildProvideLiquidityTonTxParams({
                         userWalletAddress: wallet,
                         proxyTonAddress: jettons[network].TON.address,
-                        sendAmount: toNano(offerAmount),
-                        otherTokenAddress: askJetton.address,
+                        sendAmount: new TonWeb.utils.BN(toNano(minAskAmount).toString()),
+                        otherTokenAddress: offerJetton.address,
                         minLpOut: new TonWeb.utils.BN("1"), // TODO: get minLpOut
                     }),
                     router.buildProvideLiquidityJettonTxParams({

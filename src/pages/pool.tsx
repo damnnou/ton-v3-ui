@@ -1,6 +1,7 @@
 import { useParams } from "react-router-dom";
 import { AddLiquidity } from "src/components/pool/AddLiquidity";
 import { PoolDetails } from "src/components/pool/PoolDetails";
+import { RefundLiquidity } from "src/components/pool/RefundLiquidity";
 import { RemoveLiquidity } from "src/components/pool/RemoveLiquidity";
 import { Skeleton } from "src/components/ui/Skeleton";
 import { usePool } from "src/hooks/pool/usePool";
@@ -39,7 +40,8 @@ const PoolPage = () => {
             <div className="flex max-lg:flex-col gap-4">
                 <PoolDetails pool={pool} />
                 <div className="w-fit lg:min-w-[500px] flex flex-col gap-4">
-                    <AddLiquidity jetton0={jetton0} jetton1={jetton1} />
+                    <RefundLiquidity pool={pool} />
+                    <AddLiquidity pool={pool} />
                     {position && <RemoveLiquidity jetton0={jetton0} jetton1={jetton1} position={position} />}
                 </div>
             </div>
