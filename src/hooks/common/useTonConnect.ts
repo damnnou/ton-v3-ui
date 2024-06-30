@@ -1,4 +1,4 @@
-import { CHAIN, useTonConnectUI, useTonWallet } from "@tonconnect/ui-react";
+import { useTonConnectUI, useTonWallet } from "@tonconnect/ui-react";
 import { MessageData } from "@ston-fi/sdk";
 import bytesToBase64 from "src/utils/common/bytesToBase64";
 
@@ -10,7 +10,6 @@ export function useTonConnect(): {
     sender: Sender;
     connected: boolean;
     wallet: string | null;
-    network: CHAIN | null;
 } {
     const [tonConnectUI] = useTonConnectUI();
     const wallet = useTonWallet();
@@ -36,6 +35,5 @@ export function useTonConnect(): {
         },
         connected: !!wallet?.account.address,
         wallet: wallet?.account.address ?? null,
-        network: wallet?.account.chain ?? null,
     };
 }

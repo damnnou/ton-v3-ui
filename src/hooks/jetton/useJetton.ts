@@ -4,8 +4,6 @@ import { useJettonWalletContract } from "../contracts/useJettonWalletContract";
 import { Jetton } from "src/constants/jettons";
 import { useTonConsoleClient } from "../common/useTonConsoleClient";
 import { useTokensState } from "src/state/tokensStore";
-import { CHAIN } from "@tonconnect/ui-react";
-import { useTonConnect } from "../common/useTonConnect";
 
 export function useJettonByJettonWallet(jettonWalletAddress: AddressType | undefined) {
     const [jettonAddress, setJettonAddress] = useState<AddressType>();
@@ -27,11 +25,10 @@ export function useJetton(jettonAddress: AddressType | undefined) {
     const [jetton, setJetton] = useState<Jetton>();
     const { importedTokens } = useTokensState();
     const client = useTonConsoleClient();
-    const { network } = useTonConnect();
 
     useEffect(() => {
         if (!jettonAddress || !client) return;
-        const allTokens = Object.values(importedTokens[network || CHAIN.MAINNET]);
+        const allTokens = Object.values(importedTokens);
         const token = allTokens.find((jetton) => jetton.address.toString(false) === jettonAddress.toString(false));
         if (token) {
             setJetton(token);
@@ -47,7 +44,7 @@ export function useJetton(jettonAddress: AddressType | undefined) {
                 decimals: Number(metadata.decimals),
             });
         });
-    }, [jettonAddress, client, importedTokens, network]);
+    }, [jettonAddress, client, importedTokens]);
 
     return jetton;
 }

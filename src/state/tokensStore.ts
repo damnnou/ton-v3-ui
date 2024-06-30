@@ -1,13 +1,12 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import deepMerge from "lodash.merge";
-import { CHAIN } from "@tonconnect/ui-react";
 import { Jetton, jettons, Jettons } from "src/constants/jettons";
 
 interface TokensState {
     importedTokens: Jettons;
     actions: {
-        importToken: (jetton: Jetton, chain: CHAIN) => void;
+        importToken: (jetton: Jetton) => void;
     };
 }
 
@@ -16,15 +15,12 @@ export const useTokensState = create(
         (set, get) => ({
             importedTokens: jettons,
             actions: {
-                importToken: (jetton, chain) => {
+                importToken: (jetton) => {
                     const { importedTokens } = get();
                     set({
                         importedTokens: {
                             ...importedTokens,
-                            [chain]: {
-                                ...importedTokens[chain],
-                                [jetton.symbol]: jetton,
-                            },
+                            [jetton.symbol]: jetton,
                         },
                     });
                 },

@@ -6,7 +6,6 @@ import { MessageData } from "@ston-fi/sdk";
 import { toNano } from "ton-core";
 import { isTON } from "src/utils/common/isTON";
 import { parseUnits } from "src/utils/common/parseUnits";
-import { CHAIN } from "@tonconnect/ui-react";
 
 enum SwapType {
     TON_TO_JETTON = "TON_TO_JETTON",
@@ -14,12 +13,12 @@ enum SwapType {
     JETTON_TO_JETTON = "JETTON_TO_JETTON",
 }
 
-function getSwapType(offerJetton: Jetton, askJetton: Jetton, network: CHAIN): SwapType {
-    if (isTON(offerJetton.address, network)) {
+function getSwapType(offerJetton: Jetton, askJetton: Jetton): SwapType {
+    if (isTON(offerJetton.address)) {
         return SwapType.TON_TO_JETTON;
     }
 
-    if (isTON(askJetton.address, network)) {
+    if (isTON(askJetton.address)) {
         return SwapType.JETTON_TO_TON;
     }
 
@@ -41,22 +40,22 @@ export function useSwapTxParams({
 
     const router = useRouterContract();
 
-    const { wallet, network } = useTonConnect();
+    const { wallet } = useTonConnect();
 
     useEffect(() => {
-        if (!wallet || !router || !minAskAmount || !offerAmount || !network) {
+        if (!wallet || !router || !minAskAmount || !offerAmount) {
             setTxParams(undefined);
             return;
         }
 
-        const swapType = getSwapType(offerJetton, askJetton, network);
+        const swapType = getSwapType(offerJetton, askJetton);
 
         switch (swapType) {
             case SwapType.TON_TO_JETTON:
                 router
                     .buildSwapTonToJettonTxParams({
                         userWalletAddress: wallet,
-                        proxyTonAddress: jettons[network].TON.address,
+                        proxyTonAddress: jettons.TON.address,
                         offerAmount: toNano(offerAmount),
                         askJettonAddress: askJetton.address,
                         minAskAmount: parseUnits(minAskAmount, askJetton.decimals),
@@ -68,7 +67,7 @@ export function useSwapTxParams({
                 router
                     .buildSwapJettonToTonTxParams({
                         userWalletAddress: wallet,
-                        proxyTonAddress: jettons[network].TON.address,
+                        proxyTonAddress: jettons.TON.address,
                         offerJettonAddress: offerJetton.address,
                         offerAmount: parseUnits(offerAmount, offerJetton.decimals),
                         minAskAmount: toNano(minAskAmount),
@@ -91,7 +90,7 @@ export function useSwapTxParams({
             default:
                 break;
         }
-    }, [router, wallet, askJetton, offerJetton, offerAmount, minAskAmount, network]);
+    }, [router, wallet, askJetton, offerJetton, offerAmount, minAskAmount]);
 
     if (txParams) return [txParams];
 }

@@ -1,11 +1,9 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { cn } from "src/lib/cn";
 import { MenuState } from "src/types/token-menu";
 import { ActionButton, SwitchButton } from "../../ui/Button";
 import { Jetton } from "src/constants/jettons";
 import { useDebounce } from "src/hooks/common/useDebounce";
-import { useTonConnect } from "src/hooks/common/useTonConnect";
-import { CHAIN } from "@tonconnect/ui-react";
 import { useTokensState } from "src/state/tokensStore";
 import TokenSelectMenu from "src/components/swap/TokenSelectMenu";
 import { InputField } from "src/components/swap/AmountsSection/InputField";
@@ -19,12 +17,10 @@ import { formatUnits } from "src/utils/common/formatUnits";
 export const CreatePoolForm = () => {
     const [menuState, setMenuState] = useState<MenuState>(MenuState.CLOSED);
 
-    const { network } = useTonConnect();
-
     const { importedTokens } = useTokensState();
 
-    const [inputCurrency, setInputCurrency] = useState<Jetton>(importedTokens[network || CHAIN.MAINNET].TON);
-    const [outputCurrency, setOutputCurrency] = useState<Jetton>(importedTokens[network || CHAIN.MAINNET].USDT);
+    const [inputCurrency, setInputCurrency] = useState<Jetton>(importedTokens.TON);
+    const [outputCurrency, setOutputCurrency] = useState<Jetton>(importedTokens.USDT);
 
     const [inputValue, setInputValue] = useState<number>(0);
 
@@ -46,12 +42,6 @@ export const CreatePoolForm = () => {
     });
 
     const { write, isLoading: isProviding } = useSendTransaction(txsParams);
-
-    useEffect(() => {
-        if (!network) return;
-        setInputCurrency(importedTokens[network].TON);
-        setOutputCurrency(importedTokens[network].USDT);
-    }, [network, importedTokens]);
 
     return (
         <>

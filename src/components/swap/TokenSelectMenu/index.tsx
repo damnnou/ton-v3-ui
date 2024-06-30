@@ -3,8 +3,6 @@ import ArrowBtn from "src/assets/arrow.svg";
 import { MenuState } from "src/types/token-menu";
 import { cn } from "src/lib/cn";
 import { Jetton } from "src/constants/jettons";
-import { useTonConnect } from "src/hooks/common/useTonConnect";
-import { CHAIN } from "@tonconnect/ui-react";
 import { useTokensState } from "src/state/tokensStore";
 import { JettonLogo } from "src/components/common/JettonLogo";
 import { Input } from "src/components/ui/Input";
@@ -18,14 +16,13 @@ import { Skeleton } from "src/components/ui/Skeleton";
 const TokenSelectMenu: React.FC<TokenSelectMenuProps> = ({ onClick, onSelect, selectedToken }) => {
     const [searchValue, setSearchValue] = useState("");
     const [tokenToImport, setTokenToImport] = useState("");
-    const { network } = useTonConnect();
 
     const {
         importedTokens,
         actions: { importToken },
     } = useTokensState();
 
-    const allTokens = Object.values(importedTokens[network || CHAIN.MAINNET]);
+    const allTokens = Object.values(importedTokens);
 
     const newToken = useJetton(tokenToImport);
 
@@ -40,7 +37,7 @@ const TokenSelectMenu: React.FC<TokenSelectMenuProps> = ({ onClick, onSelect, se
 
     const handleImportToken = () => {
         if (!newToken) return;
-        importToken(newToken, network || CHAIN.MAINNET);
+        importToken(newToken);
     };
 
     useEffect(() => {

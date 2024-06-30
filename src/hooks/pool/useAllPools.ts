@@ -1,11 +1,9 @@
-import { useTonConnect } from "../common/useTonConnect";
 import { Jetton } from "src/constants/jettons";
 import { useTonClient } from "../common/useTonClient";
 import { useEffect, useState } from "react";
 import { Pool } from "./usePool";
 import { Router } from "src/contracts/Router";
 import { ROUTER } from "src/constants/addresses";
-import { CHAIN } from "@tonconnect/ui-react";
 import { useTokensState } from "src/state/tokensStore";
 
 export function useAllPools() {
@@ -13,7 +11,6 @@ export function useAllPools() {
     const [poolList, setPoolList] = useState<Pool[]>([]);
     const [isFirstTime, setIsFirstTime] = useState(false);
 
-    const { network } = useTonConnect();
     const tonApiClient = useTonClient();
 
     const { importedTokens } = useTokensState();
@@ -22,9 +19,9 @@ export function useAllPools() {
         if (!tonApiClient || isFirstTime) return;
         setIsFirstTime(true);
 
-        const router = new Router({ tonApiClient: tonApiClient.provider, address: ROUTER[network || CHAIN.MAINNET] });
+        const router = new Router({ tonApiClient: tonApiClient.provider, address: ROUTER });
 
-        const tokenKeys = Object.values(importedTokens[network || CHAIN.MAINNET]);
+        const tokenKeys = Object.values(importedTokens);
 
         function getAllCombinations(arr: Jetton[]) {
             const result = [];
@@ -64,7 +61,7 @@ export function useAllPools() {
         };
 
         findAllPools();
-    }, [network, tonApiClient, isFirstTime, importedTokens]);
+    }, [tonApiClient, isFirstTime, importedTokens]);
 
     return { isLoading, data: poolList };
 }
