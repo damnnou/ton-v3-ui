@@ -1,4 +1,4 @@
-import { CHAIN, TonConnectButton, useTonConnectUI } from "@tonconnect/ui-react";
+import { TonConnectButton, useTonConnectUI } from "@tonconnect/ui-react";
 import Navigation from "./Navigation";
 import { useTonConnect } from "src/hooks/common/useTonConnect";
 import { Wallet } from "lucide-react";
@@ -24,12 +24,12 @@ const Algebra = () => (
 );
 
 const Account = () => {
-    const { network, connected } = useTonConnect();
+    const { connected } = useTonConnect();
     const [tonConnectUI] = useTonConnectUI();
 
     return (
         <div className="flex justify-end items-center gap-4 whitespace-nowrap w-1/3">
-            {network && <div className="max-md:hidden">{network === CHAIN.MAINNET ? "Mainnet" : "Testnet"}</div>}
+            <div>Testnet</div>
             <TonConnectButton className="max-md:hidden" />
             <Wallet
                 onClick={() => (connected ? tonConnectUI.disconnect() : tonConnectUI.openModal())}

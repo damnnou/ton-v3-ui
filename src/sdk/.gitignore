@@ -1,0 +1,13 @@
+*.log
+.DS_Store
+node_modules
+dist
+
+src/abis
+src/classes
+src/constants
+src/entities
+src/enums
+src/functions
+src/types
+src/utils

@@ -1,9 +1,9 @@
 import { AddressType } from "@ston-fi/sdk";
 import { useEffect, useState } from "react";
 import { useJettonWalletContract } from "../contracts/useJettonWalletContract";
-import { Jetton } from "src/constants/jettons";
 import { useTonConsoleClient } from "../common/useTonConsoleClient";
 import { useTokensState } from "src/state/tokensStore";
+import { Jetton } from "src/sdk/src/TON/entities/Jetton";
 
 export function useJettonByJettonWallet(jettonWalletAddress: AddressType | undefined) {
     const [jettonAddress, setJettonAddress] = useState<AddressType>();
@@ -21,7 +21,7 @@ export function useJettonByJettonWallet(jettonWalletAddress: AddressType | undef
     return jetton;
 }
 
-export function useJetton(jettonAddress: AddressType | undefined) {
+export function useJetton(jettonAddress: AddressType | undefined): Jetton | undefined {
     const [jetton, setJetton] = useState<Jetton>();
     const { importedTokens } = useTokensState();
     const client = useTonConsoleClient();
@@ -31,18 +31,12 @@ export function useJetton(jettonAddress: AddressType | undefined) {
         const allTokens = Object.values(importedTokens);
         const token = allTokens.find((jetton) => jetton.address.toString(false) === jettonAddress.toString(false));
         if (token) {
-            setJetton(token);
+            setJetton(new Jetton(token.address.toString(false), token.decimals, token.symbol, token.name));
             return;
         }
 
         client.jettons.getJettonInfo(jettonAddress.toString(false)).then(({ metadata }) => {
-            setJetton({
-                name: metadata.name,
-                address: jettonAddress,
-                symbol: metadata.symbol === "pTON" ? "TON" : metadata.symbol === "☯" ? "tSTON" : metadata.symbol,
-                image: metadata.image,
-                decimals: Number(metadata.decimals),
-            });
+            setJetton(new Jetton(jettonAddress.toString(false), Number(metadata.decimals), metadata.symbol, metadata.name));
         });
     }, [jettonAddress, client, importedTokens]);
 
