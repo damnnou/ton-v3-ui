@@ -1,20 +1,42 @@
-import { MessageData } from "@ston-fi/sdk";
-import { useTonConnectModal } from "@tonconnect/ui-react";
+import { CHAIN, useTonConnectModal } from "@tonconnect/ui-react";
 import { ButtonHTMLAttributes } from "react";
 import { ActionButton } from "src/components/ui/Button";
 import { Spinner } from "src/components/ui/Spinner";
-import { useSendTransaction } from "src/hooks/common/useSendTransaction";
 import { useTonConnect } from "src/hooks/common/useTonConnect";
+import { usePoolV3 } from "src/hooks/pool/usePoolV3";
+import { useSwapCallback } from "src/hooks/swap/useSwapCallback";
+import { useDerivedSwapInfo } from "src/state/swapStore";
 
-interface SwapButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-    txParams: MessageData[] | undefined;
-}
+interface SwapButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {}
 
-export const SwapButton = ({ txParams, ...props }: SwapButtonProps) => {
-    const { connected } = useTonConnect();
+export const SwapButton = ({ ...props }: SwapButtonProps) => {
+    const { connected, network } = useTonConnect();
     const { open } = useTonConnectModal();
 
-    const { write, isLoading, isPending } = useSendTransaction(txParams);
+    const { inputError: swapInputError, parsedAmount: amountIn, parsedAmountOut: amountOut, poolAddress, isExactIn } = useDerivedSwapInfo();
+
+    const pool = usePoolV3(poolAddress);
+
+    const { callback: swapCallback, error: swapCallbackError } = useSwapCallback({
+        amountIn: isExactIn ? amountIn?.toFixed() : amountOut?.toFixed(),
+        amountOut: isExactIn ? amountOut?.toFixed() : amountIn?.toFixed(),
+        pool,
+    });
+
+    const isValid = !swapInputError;
+
+    const isWrongChain = network !== CHAIN.TESTNET;
+
+    if (!pool)
+        return (
+            <ActionButton disabled>
+                <Spinner />
+            </ActionButton>
+        );
+
+    if (!connected) return <ActionButton onClick={open}>Connect wallet</ActionButton>;
+
+    if (isWrongChain) return <ActionButton disabled>Wrong network</ActionButton>;
 
     if (!connected)
         return (
@@ -23,11 +45,9 @@ export const SwapButton = ({ txParams, ...props }: SwapButtonProps) => {
             </ActionButton>
         );
 
-    if (!txParams) return <ActionButton disabled>{props.disabled ? <Spinner className="w-12 h-12" /> : "Enter an amount"}</ActionButton>;
-
     return (
-        <ActionButton {...props} disabled={isPending || isLoading || props.disabled} onClick={write}>
-            {isPending ? "Sending..." : isLoading || props.disabled ? <Spinner className="w-12 h-12" /> : "Swap"}
+        <ActionButton onClick={swapCallback} disabled={!isValid || !!swapCallbackError}>
+            {swapInputError ? swapInputError : "Swap"}
         </ActionButton>
     );
 };

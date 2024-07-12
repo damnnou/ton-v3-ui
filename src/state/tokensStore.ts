@@ -1,7 +1,8 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import deepMerge from "lodash.merge";
-import { Jetton, jettons, Jettons } from "src/constants/jettons";
+import { jettons, Jettons } from "src/constants/jettons";
+import { Jetton } from "src/sdk/src/entities/Jetton";
 
 interface TokensState {
     importedTokens: Jettons;

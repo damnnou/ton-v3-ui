@@ -1,15 +1,19 @@
+import { PoolDetails } from "src/components/pool/PoolDetails";
+import { SwapButton } from "src/components/swap/SwapButton";
+import SwapPair from "src/components/swap/SwapPair";
 import { Skeleton } from "src/components/ui/Skeleton";
-import { jettons } from "src/constants/jettons";
+import { POOL } from "src/constants/addresses";
 import { usePoolV3 } from "src/hooks/pool/usePoolV3";
 
-const POOL_ADDRESS = "EQB6Zp8Z2P7hLxJpZDqQw3Z6yX3YpSjJrXqE9TmZ5D8Q";
-
 const V3Page = () => {
-    const pool = usePoolV3(POOL_ADDRESS);
-    const jetton0 = jettons.TON;
-    const jetton1 = jettons.USDT;
+    const pool = usePoolV3(POOL);
 
-    if (!jetton0 || !jetton1) {
+    console.log(pool);
+
+    const jetton0 = pool?.jetton0;
+    const jetton1 = pool?.jetton1;
+
+    if (!jetton0 || !jetton1 || !pool) {
         return (
             <div className="flex flex-col gap-6 py-20">
                 <Skeleton className="w-64 h-10 mr-auto  animate-pulse" />
@@ -17,6 +21,7 @@ const V3Page = () => {
             </div>
         );
     }
+
     return (
         <div className="w-full flex flex-col gap-6 py-20 animate-fade-in">
             <div className="flex items-center gap-4">
@@ -25,14 +30,17 @@ const V3Page = () => {
                     <img className="rounded-full -ml-2" src={jetton1.image} width={42} height={42} />
                 </div>
                 <h2 className="text-3xl mr-auto">
-                    {jetton0?.symbol} / {jetton1?.symbol}
+                    {jetton0.symbol} / {jetton1.symbol}
                 </h2>
             </div>
             <div className="flex max-lg:flex-col gap-4">
-                <div className="w-fit lg:min-w-[500px] flex flex-col gap-4">
-                    {/* <RefundLiquidity pool={pool} />
-                    <AddLiquidity pool={pool} /> */}
+                <div className="relative w-3/4 rounded-2xl transition-all duration-300 bg-light delay-50 overflow-hidden shadow-2xl shadow-purple-500/10 flex flex-col sm:gap-4 gap-2 border-2 border-border-light sm:p-4 sm:rounded-3xl sm:bg-light p-2 h-[318px] sm:h-[350px]">
+                    <div className="flex flex-col sm:gap-4 gap-2">
+                        <SwapPair />
+                        <SwapButton />
+                    </div>
                 </div>
+                <PoolDetails pool={pool} />
             </div>
         </div>
     );

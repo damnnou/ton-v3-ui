@@ -1,3 +1,2 @@
-import { AddressType } from "@ston-fi/sdk";
-
-export const ROUTER: AddressType = "EQBsGx9ArADUrREB34W-ghgsCgBShvfUr4Jvlu-0KGc33Rbt";
+export const ROUTER = "kQD0H-NCUpSniPnd2YZN5SXGDWEyHr9Xtf1gGVE-731qK8bF";
+export const POOL = "EQBsBAqZ5vrLbKXxryEd21vbEwvehiPK-sWQ4tIVOcVZWHFM";

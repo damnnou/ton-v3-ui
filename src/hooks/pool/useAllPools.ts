@@ -1,10 +1,8 @@
-import { Jetton } from "src/constants/jettons";
-import { useTonClient } from "../common/useTonClient";
 import { useEffect, useState } from "react";
-import { Pool } from "./usePool";
-import { Router } from "src/contracts/Router";
-import { ROUTER } from "src/constants/addresses";
 import { useTokensState } from "src/state/tokensStore";
+import { useTonClient } from "../common/useTonClient";
+import { Pool } from "./usePoolV3";
+import { Jetton } from "src/sdk/src/entities/Jetton";
 
 export function useAllPools() {
     const [isLoading, setIsLoading] = useState(false);
@@ -19,7 +17,7 @@ export function useAllPools() {
         if (!tonApiClient || isFirstTime) return;
         setIsFirstTime(true);
 
-        const router = new Router({ tonApiClient: tonApiClient.provider, address: ROUTER });
+        const router = undefined;
 
         const tokenKeys = Object.values(importedTokens);
 
@@ -45,7 +43,7 @@ export function useAllPools() {
 
                 try {
                     console.log("Fetching pool: ", token0.symbol, " - ", token1.symbol);
-                    const pool = await router.getPool({ token0: token0.address, token1: token1.address });
+                    const pool = await router?.getPool({ token0: token0.address, token1: token1.address });
                     if (!pool) throw new Error();
 
                     const poolData = await pool.getData();

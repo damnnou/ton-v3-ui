@@ -1,9 +1,6 @@
-import TonWeb from "tonweb";
+export function parseUnits(amount: number | string, decimals: number): bigint {
+    const amountNum = Number(amount);
+    if (isNaN(amountNum)) return BigInt(0);
 
-const {
-    utils: { BN },
-} = TonWeb;
-
-export function parseUnits(amount: number, decimals: number): typeof BN {
-    return new BN(BigInt(Math.round(amount * 10 ** decimals)));
+    return BigInt(Math.round(amountNum * 10 ** decimals));
 }

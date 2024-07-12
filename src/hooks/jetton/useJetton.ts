@@ -1,44 +1,52 @@
-import { AddressType } from "@ston-fi/sdk";
 import { useEffect, useState } from "react";
-import { useJettonWalletContract } from "../contracts/useJettonWalletContract";
-import { useTonConsoleClient } from "../common/useTonConsoleClient";
 import { useTokensState } from "src/state/tokensStore";
-import { Jetton } from "src/sdk/src/TON/entities/Jetton";
+import { Jetton } from "src/sdk/src/entities/Jetton";
+import { useJettonMinterContract } from "../contracts/useJettonMinterContract";
+import { displayContentCell } from "src/sdk/src/contracts/common/jettonContent";
 
-export function useJettonByJettonWallet(jettonWalletAddress: AddressType | undefined) {
-    const [jettonAddress, setJettonAddress] = useState<AddressType>();
-
-    const jettonWallet = useJettonWalletContract(jettonWalletAddress);
-
-    const jetton = useJetton(jettonAddress);
-
-    useEffect(() => {
-        if (!jettonWallet) return;
-
-        jettonWallet.getData().then((data) => setJettonAddress(data.jettonMinterAddress));
-    }, [jettonWallet]);
-
-    return jetton;
-}
-
-export function useJetton(jettonAddress: AddressType | undefined): Jetton | undefined {
+export function useJetton(jettonMinterAddress: string | undefined): Jetton | undefined {
     const [jetton, setJetton] = useState<Jetton>();
     const { importedTokens } = useTokensState();
-    const client = useTonConsoleClient();
+    const jettonMinter = useJettonMinterContract(jettonMinterAddress);
 
     useEffect(() => {
-        if (!jettonAddress || !client) return;
+        if (!jettonMinterAddress || !jettonMinter) return;
         const allTokens = Object.values(importedTokens);
-        const token = allTokens.find((jetton) => jetton.address.toString(false) === jettonAddress.toString(false));
+        const token = allTokens.find((jetton) => jetton.address.toLowerCase() === jettonMinterAddress.toLowerCase());
         if (token) {
-            setJetton(new Jetton(token.address.toString(false), token.decimals, token.symbol, token.name));
+            setJetton(new Jetton(token.address, token.decimals, token.symbol, token.name, token.image));
             return;
         }
 
-        client.jettons.getJettonInfo(jettonAddress.toString(false)).then(({ metadata }) => {
-            setJetton(new Jetton(jettonAddress.toString(false), Number(metadata.decimals), metadata.symbol, metadata.name));
+        /* fetch and parse metadata */
+        const fetchJettonData = async () => {
+            const jettonData = await jettonMinter.getJettonData();
+            const metadata = await displayContentCell(jettonData.content);
+
+            return metadata;
+        };
+        
+        fetchJettonData().then((metadata) => {
+            if (!metadata) throw new Error("Jetton data not found");
+            setJetton(new Jetton(jettonMinterAddress, Number(metadata.decimals), metadata.symbol, metadata.name, metadata.image));
         });
-    }, [jettonAddress, client, importedTokens]);
+    }, [jettonMinterAddress, jettonMinter, importedTokens]);
 
     return jetton;
 }
+
+// export function useJettonByJettonWallet(jettonWalletAddress: AddressType | undefined) {
+//     const [jettonAddress, setJettonAddress] = useState<AddressType>();
+
+//     const jettonWallet = useJettonWalletContract(jettonWalletAddress);
+
+//     const jetton = useJetton(jettonAddress);
+
+//     useEffect(() => {
+//         if (!jettonWallet) return;
+
+//         jettonWallet.getData().then((data) => setJettonAddress(data.jettonMinterAddress));
+//     }, [jettonWallet]);
+
+//     return jetton;
+// }

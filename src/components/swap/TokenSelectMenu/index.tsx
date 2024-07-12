@@ -1,21 +1,51 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import ArrowBtn from "src/assets/arrow.svg";
 import { MenuState } from "src/types/token-menu";
 import { cn } from "src/lib/cn";
-import { Jetton } from "src/constants/jettons";
 import { useTokensState } from "src/state/tokensStore";
 import { JettonLogo } from "src/components/common/JettonLogo";
 import { Input } from "src/components/ui/Input";
 import { Check, Copy, Search } from "lucide-react";
-import { Address } from "ton-core";
+import { Address } from "@ton/core";
 import { useJetton } from "src/hooks/jetton/useJetton";
 import { useJettonBalance } from "src/hooks/jetton/useJettonBalance";
 import { formatUnits } from "src/utils/common/formatUnits";
 import { Skeleton } from "src/components/ui/Skeleton";
+import { Jetton } from "src/sdk/src/entities/Jetton";
+import { useSwapActionHandlers, useSwapState } from "src/state/swapStore";
+import { SwapField } from "src/types/swap-field";
+import { useTokenMenuState } from "src/state/tokenMenuStore";
+import { useTonConnect } from "src/hooks/common/useTonConnect";
 
-const TokenSelectMenu: React.FC<TokenSelectMenuProps> = ({ onClick, onSelect, selectedToken }) => {
+const TokenSelectMenu = () => {
     const [searchValue, setSearchValue] = useState("");
     const [tokenToImport, setTokenToImport] = useState("");
+
+    const {
+        [SwapField.INPUT]: { currencyId: tokenIn },
+        [SwapField.OUTPUT]: { currencyId: tokenOut },
+    } = useSwapState();
+
+    const { onCurrencySelection } = useSwapActionHandlers();
+
+    const {
+        menuState,
+        actions: { setMenuState },
+    } = useTokenMenuState();
+
+    const handleInputSelect = useCallback(
+        (inputCurrency: Jetton) => {
+            onCurrencySelection(SwapField.INPUT, inputCurrency);
+        },
+        [onCurrencySelection]
+    );
+
+    const handleOutputSelect = useCallback(
+        (outputCurrency: Jetton) => {
+            onCurrencySelection(SwapField.OUTPUT, outputCurrency);
+        },
+        [onCurrencySelection]
+    );
 
     const {
         importedTokens,
@@ -27,12 +57,13 @@ const TokenSelectMenu: React.FC<TokenSelectMenuProps> = ({ onClick, onSelect, se
     const newToken = useJetton(tokenToImport);
 
     const handleClose = () => {
-        onClick(MenuState.CLOSED);
+        setMenuState(MenuState.CLOSED);
     };
 
     const handleJettonSelect = (jetton: Jetton) => {
-        onSelect(jetton);
-        onClick(MenuState.CLOSED);
+        if (menuState === MenuState.INPUT) handleInputSelect(jetton);
+        if (menuState === MenuState.OUTPUT) handleOutputSelect(jetton);
+        setMenuState(MenuState.CLOSED);
     };
 
     const handleImportToken = () => {
@@ -42,7 +73,7 @@ const TokenSelectMenu: React.FC<TokenSelectMenuProps> = ({ onClick, onSelect, se
 
     useEffect(() => {
         if (!searchValue || !allTokens) return;
-        if (Address.isFriendly(searchValue) && !allTokens.find((jetton) => jetton.address.toString(true) === searchValue)) {
+        if (Address.isFriendly(searchValue) && !allTokens.find((jetton) => jetton.address === searchValue)) {
             setTokenToImport(searchValue);
         }
     }, [searchValue, allTokens]);
@@ -80,11 +111,13 @@ const TokenSelectMenu: React.FC<TokenSelectMenuProps> = ({ onClick, onSelect, se
                     {allTokens.map((jetton) => {
                         if (
                             !jetton.symbol.toLowerCase().includes(searchValue.toLowerCase()) &&
-                            !jetton.name.toLowerCase().includes(searchValue.toLowerCase())
+                            !jetton.name?.toLowerCase().includes(searchValue.toLowerCase())
                         ) {
                             return null;
                         }
-                        const isTokenSelected = selectedToken.address === jetton.address;
+                        const isTokenSelected =
+                            (menuState === MenuState.INPUT && tokenOut === jetton.address) ||
+                            (menuState === MenuState.OUTPUT && tokenIn === jetton.address);
                         return <JettonRow key={jetton.symbol} onSelect={handleJettonSelect} isSelected={isTokenSelected} jetton={jetton} />;
                     })}
                 </ul>
@@ -95,11 +128,12 @@ const TokenSelectMenu: React.FC<TokenSelectMenuProps> = ({ onClick, onSelect, se
 
 const JettonRow = ({ onSelect, isSelected, jetton }: { onSelect: (jetton: Jetton) => void; isSelected: boolean; jetton: Jetton }) => {
     const [isCopied, setIsCopied] = useState(false);
-    const balance = useJettonBalance(jetton.address);
+    const { wallet } = useTonConnect();
+    const balance = useJettonBalance(jetton.address, wallet);
 
     const handleCopy = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         e.stopPropagation();
-        navigator.clipboard.writeText(jetton.address.toString(true)).then(() => {
+        navigator.clipboard.writeText(jetton.address).then(() => {
             setIsCopied(true);
             setTimeout(() => setIsCopied(false), 3000);
         });
@@ -127,11 +161,5 @@ const JettonRow = ({ onSelect, isSelected, jetton }: { onSelect: (jetton: Jetton
         </li>
     );
 };
-
-interface TokenSelectMenuProps {
-    onClick: (state: MenuState) => void;
-    onSelect: (token: Jetton) => void;
-    selectedToken: Jetton;
-}
 
 export default TokenSelectMenu;

@@ -1,9 +1,9 @@
-import { MessageData } from "@ston-fi/sdk";
 import { useTonConnect } from "./useTonConnect";
 import { useEffect, useState } from "react";
+import { Address, SenderArguments } from "@ton/core";
 import { useTonClient } from "./useTonClient";
 
-export function useSendTransaction(txParams: MessageData[] | undefined) {
+export function useSendTransaction(txParams: SenderArguments | undefined) {
     const client = useTonClient();
     const { sender, wallet } = useTonConnect();
 
@@ -17,12 +17,12 @@ export function useSendTransaction(txParams: MessageData[] | undefined) {
         setIsLoading(true);
 
         const waitForTransaction = async () => {
-            const lastTx = (await client.getTransactions(wallet, 1))[0];
-            const lastTxHash = lastTx.transaction_id.hash;
+            const lastTx = (await client.getTransactions(Address.parse(wallet), { limit: 1 }))[0];
+            const lastTxHash = lastTx.hash;
 
             const waitForTx = setInterval(async () => {
-                const tx = (await client.getTransactions(wallet, 1))[0];
-                const txHash = tx.transaction_id.hash;
+                const tx = (await client.getTransactions(Address.parse(wallet), { limit: 1 }))[0];
+                const txHash = tx.hash;
 
                 if (lastTxHash !== txHash) {
                     setIsLoading(false);

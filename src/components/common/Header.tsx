@@ -15,9 +15,9 @@ const Header = () => (
 const Algebra = () => (
     <div className="flex items-center gap-2 w-1/3">
         <Link to={"/"}>
-            <div className="flex items-center gap-6 py-1 px-4 bg-card text-xl rounded-xl hover:bg-border-light duration-200">
+            <div className="flex items-center gap-4 py-1 px-4 bg-card text-xl rounded-xl hover:bg-border-light duration-200">
                 <img className="rotate-180 scale-x-[-1]" width={32} src="/algebra-icon.png" />
-                <p className="max-md:hidden">Algebra x TON</p>
+                <p className="max-md:hidden">TONCO</p>
             </div>
         </Link>
     </div>

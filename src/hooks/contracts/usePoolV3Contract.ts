@@ -1,18 +1,18 @@
-import { PoolV3Contract } from "src/contracts/PoolV3";
 import { useAsyncInitialize } from "../common/useAsyncInitialize";
-import { Address, OpenedContract } from "ton-core";
-import { useTonClientV3 } from "../common/useTonClientV3";
+import { Address, OpenedContract } from "@ton/core";
+import { useTonClient } from "../common/useTonClient";
+import { PoolV3Contract } from "src/sdk/src/contracts/PoolV3Contract";
 
-export function usePoolV3Contract(pool: string | undefined) {
-    const client = useTonClientV3();
+export function usePoolV3Contract(poolAddress: string | undefined) {
+    const client = useTonClient();
 
     const poolV3Contract = useAsyncInitialize(async () => {
-        if (!client || !pool) return;
+        if (!client || !poolAddress) return;
 
-        const contract = new PoolV3Contract(Address.parse(pool));
+        const contract = new PoolV3Contract(Address.parse(poolAddress));
 
         return client.open(contract) as OpenedContract<PoolV3Contract>;
-    }, [client, pool]);
+    }, [client, poolAddress]);
 
     return poolV3Contract;
 }

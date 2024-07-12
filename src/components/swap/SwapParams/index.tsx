@@ -1,4 +1,4 @@
-import { Jetton } from "src/constants/jettons";
+import { Jetton } from "src/sdk/src/entities/Jetton";
 
 interface SwapInfoProps {
     minReceivedAmount: number | undefined;

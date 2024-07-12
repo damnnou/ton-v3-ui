@@ -1,16 +1,18 @@
-import { useMemo } from "react";
-import { AddressType } from "tonweb";
+import { useAsyncInitialize } from "../common/useAsyncInitialize";
+import { Address, OpenedContract } from "@ton/core";
 import { useTonClient } from "../common/useTonClient";
-import { JettonWallet } from "src/contracts/JettonWallet";
+import { JettonWallet } from "src/sdk/src/contracts/common/JettonWallet";
 
-export function useJettonWalletContract(jettonWalletAddress: AddressType | undefined) {
-    const tonApiClient = useTonClient();
+export function useJettonWalletContract(jettonWallet: string | undefined) {
+    const client = useTonClient();
 
-    return useMemo(() => {
-        if (!tonApiClient || !jettonWalletAddress) return;
+    const poolV3Contract = useAsyncInitialize(async () => {
+        if (!client || !jettonWallet) return;
 
-        return new JettonWallet(tonApiClient.provider, {
-            address: jettonWalletAddress,
-        });
-    }, [tonApiClient, jettonWalletAddress]);
+        const contract = new JettonWallet(Address.parse(jettonWallet));
+
+        return client.open(contract) as OpenedContract<JettonWallet>;
+    }, [client, jettonWallet]);
+
+    return poolV3Contract;
 }

@@ -1,6 +1,6 @@
 import { memo } from "react";
-import { Jetton } from "src/constants/jettons";
 import { cn } from "src/lib/cn";
+import { Jetton } from "src/sdk/src/entities/Jetton";
 
 export const JettonLogo = memo(({ jetton, size, className }: { jetton: Jetton; size: number; className?: string }) => {
     const mockSymbol = jetton.symbol.slice(0, 2);

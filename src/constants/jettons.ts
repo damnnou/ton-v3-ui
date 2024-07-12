@@ -1,37 +1,22 @@
-import { AddressType } from "tonweb";
-
-export interface Jetton {
-    name: string;
-    symbol: string;
-    address: AddressType;
-    image?: string;
-    decimals: number;
-}
+import { Jetton } from "src/sdk/src/entities/Jetton";
 
 export type Jettons = {
     [symbol: string]: Jetton;
 };
 
 export const jettons: Jettons = {
-    TON: {
-        name: "TON",
-        symbol: "TON",
-        address: "kQAcOvXSnnOhCdLYc6up2ECYwtNNTzlmOlidBeCs5cFPV7AM",
-        image: "https://cache.tonapi.io/imgproxy/X7T-fLahBBVIxXacXAqrsCHIgFgTQE3Jt2HAdnc5_Mc/rs:fill:200:200:1/g:no/aHR0cHM6Ly9zdGF0aWMuc3Rvbi5maS9sb2dvL3Rvbl9zeW1ib2wucG5n.webp",
-        decimals: 9,
-    },
-    USDT: {
-        name: "Tether USD",
-        symbol: "USDT",
-        address: "kQDy_cw29BM7O2tb4r4178LGWELtKzb9Xv4Fs3C005u9Sv55",
-        image: "https://cache.tonapi.io/imgproxy/T3PB4s7oprNVaJkwqbGg54nexKE0zzKhcrPv8jcWYzU/rs:fill:200:200:1/g:no/aHR0cHM6Ly90ZXRoZXIudG8vaW1hZ2VzL2xvZ29DaXJjbGUucG5n.webp",
-        decimals: 6,
-    },
-    SKATE: {
-        name: "SKATE",
-        symbol: "SKATE",
-        address: "EQBptrMzgf7A2IqEDwC6afTQ0faWVndPzH9-aZuugxLzOqNW",
-        image: "https://cache.tonapi.io/imgproxy/v1LRvf3pIQp6DEz-Itr8EH9zVsEI93LQKXejlkSH4kM/rs:fill:200:200:1/g:no/aHR0cHM6Ly9pLnBvc3RpbWcuY2MvR21xOXdic3QvbG9nby5wbmc.webp",
-        decimals: 18,
-    },
+    ALG_USD: new Jetton(
+        "EQD8Hzc0JD808OAnCsnCea2_Fq4cNAiAhGo5KaXM-zt8HV5Q",
+        9,
+        "ALG_USD",
+        "Algebra USD",
+        "https://cache.tonapi.io/imgproxy/bkEXt0iMIllDAwZ49yeipCc43WGmLgTwqvnAluEkyuE/rs:fill:200:200:1/g:no/aHR0cHM6Ly9waW1lbm92YWxleGFuZGVyLmdpdGh1Yi5pby9yZXNvdXJjZXMvaWNvbnMvQUxHX1VTRC5wbmc.webp"
+    ),
+    ALG_ETH: new Jetton(
+        "EQACEhh_dJzp3PPyEwwTfTy7Ub_f6Dt5FAKZq_t1Fqe2vaL2",
+        9,
+        "ALG_ETH",
+        "Algebra ETH",
+        "https://cache.tonapi.io/imgproxy/dOGRKCpepjByFEhB222wY5f8Ccne2AUmbTyz1jn5tz4/rs:fill:200:200:1/g:no/aHR0cHM6Ly9waW1lbm92YWxleGFuZGVyLmdpdGh1Yi5pby9yZXNvdXJjZXMvaWNvbnMvQUxHX0VUSC5wbmc.webp"
+    ),
 };

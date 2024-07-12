@@ -13,11 +13,6 @@ const menuItems = [
         active: [PATHS.SWAP],
     },
     {
-        title: "Pools",
-        link: "/pools",
-        active: [PATHS.POOLS],
-    },
-    {
         title: "V3",
         link: "/v3",
         active: [PATHS.V3],

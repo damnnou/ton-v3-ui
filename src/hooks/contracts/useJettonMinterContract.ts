@@ -1,20 +1,18 @@
-import { useMemo } from "react";
-import { AddressType } from "tonweb";
+import { useAsyncInitialize } from "../common/useAsyncInitialize";
+import { Address, OpenedContract } from "@ton/core";
 import { useTonClient } from "../common/useTonClient";
-import { JettonMinter } from "src/contracts/JettonMinter";
+import { JettonMinter } from "src/sdk/src/contracts/common/JettonMinter";
 
-export function useJettonMinterContract(jettonAddress: AddressType | undefined) {
-    const tonApiClient = useTonClient();
+export function useJettonMinterContract(jettonMinter: string | undefined) {
+    const client = useTonClient();
 
-    return useMemo(() => {
-        if (!tonApiClient || !jettonAddress) return;
+    const poolV3Contract = useAsyncInitialize(async () => {
+        if (!client || !jettonMinter) return;
 
-        return new JettonMinter(
-            tonApiClient.provider,
-            // @ts-expect-error - not all parameters are really required here
-            {
-                address: jettonAddress,
-            }
-        );
-    }, [tonApiClient, jettonAddress]);
+        const contract = new JettonMinter(Address.parse(jettonMinter));
+
+        return client.open(contract) as OpenedContract<JettonMinter>;
+    }, [client, jettonMinter]);
+
+    return poolV3Contract;
 }
