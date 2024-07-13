@@ -1,6 +1,6 @@
 import { useAsyncInitialize } from "../common/useAsyncInitialize";
 import { Address, OpenedContract } from "@ton/core";
-import { useTonClient } from "../common/useTonClient";
+import { useTonClient } from "../common/useTonClient.tsx";
 import { JettonWallet } from "src/sdk/src/contracts/common/JettonWallet";
 
 export function useJettonWalletContract(jettonWallet: string | undefined) {

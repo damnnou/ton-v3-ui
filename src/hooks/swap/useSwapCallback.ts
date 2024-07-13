@@ -29,7 +29,7 @@ export function useSwapCallback({
         amountOut &&
         beginCell()
             .storeUint(ContractOpcodes.POOLV3_SWAP, 32) // Request to swap
-            .storeAddress(pool.jetton1Wallet) // JettonWallet attached to Router is used to identify target token
+            .storeAddress(pool.jetton1_wallet) // JettonWallet attached to Router is used to identify target token
             .storeCoins(parseUnits(Number(amountOut), pool.jetton1.decimals)) // Minimum amount the we agree to get back
             .storeAddress(Address.parse(wallet)) // Address to receive result of the swap
             .endCell();

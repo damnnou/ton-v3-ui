@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useTokensState } from "src/state/tokensStore";
 import { Jetton } from "src/sdk/src/entities/Jetton";
 import { useJettonMinterContract } from "../contracts/useJettonMinterContract";
-import { displayContentCell } from "src/sdk/src/contracts/common/jettonContent";
+import { parseJettonContent } from "src/utils/jetton/parseJettonContent";
 
 export function useJetton(jettonMinterAddress: string | undefined): Jetton | undefined {
     const [jetton, setJetton] = useState<Jetton>();
@@ -18,18 +18,12 @@ export function useJetton(jettonMinterAddress: string | undefined): Jetton | und
             return;
         }
 
-        /* fetch and parse metadata */
-        const fetchJettonData = async () => {
-            const jettonData = await jettonMinter.getJettonData();
-            const metadata = await displayContentCell(jettonData.content);
-
-            return metadata;
-        };
-        
-        fetchJettonData().then((metadata) => {
-            if (!metadata) throw new Error("Jetton data not found");
-            setJetton(new Jetton(jettonMinterAddress, Number(metadata.decimals), metadata.symbol, metadata.name, metadata.image));
-        });
+        jettonMinter
+            .getJettonData()
+            .then((data) => parseJettonContent(jettonMinterAddress, data.content))
+            .then((jetton) => {
+                setJetton(jetton);
+            });
     }, [jettonMinterAddress, jettonMinter, importedTokens]);
 
     return jetton;

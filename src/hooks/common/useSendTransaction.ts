@@ -1,7 +1,7 @@
 import { useTonConnect } from "./useTonConnect";
 import { useEffect, useState } from "react";
 import { Address, SenderArguments } from "@ton/core";
-import { useTonClient } from "./useTonClient";
+import { useTonClient } from "./useTonClient.tsx";
 
 export function useSendTransaction(txParams: SenderArguments | undefined) {
     const client = useTonClient();

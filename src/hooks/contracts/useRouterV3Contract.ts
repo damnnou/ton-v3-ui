@@ -1,6 +1,6 @@
 import { useAsyncInitialize } from "../common/useAsyncInitialize";
 import { Address, OpenedContract } from "@ton/core";
-import { useTonClient } from "../common/useTonClient";
+import { useTonClient } from "../common/useTonClient.tsx";
 import { RouterV3Contract } from "src/sdk/src/contracts/RouterV3Contract";
 
 export function useRouterV3Contract(routerAddress: string | undefined) {

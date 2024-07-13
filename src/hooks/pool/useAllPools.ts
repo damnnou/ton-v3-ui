@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useTokensState } from "src/state/tokensStore";
-import { useTonClient } from "../common/useTonClient";
+import { useTonClient } from "../common/useTonClient.tsx";
 import { Pool } from "./usePoolV3";
 import { Jetton } from "src/sdk/src/entities/Jetton";
 

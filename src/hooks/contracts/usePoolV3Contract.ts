@@ -1,6 +1,6 @@
 import { useAsyncInitialize } from "../common/useAsyncInitialize";
 import { Address, OpenedContract } from "@ton/core";
-import { useTonClient } from "../common/useTonClient";
+import { useTonClient } from "../common/useTonClient.tsx";
 import { PoolV3Contract } from "src/sdk/src/contracts/PoolV3Contract";
 
 export function usePoolV3Contract(poolAddress: string | undefined) {

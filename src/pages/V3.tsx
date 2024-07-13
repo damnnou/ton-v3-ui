@@ -1,4 +1,3 @@
-import { PoolDetails } from "src/components/pool/PoolDetails";
 import { SwapButton } from "src/components/swap/SwapButton";
 import SwapPair from "src/components/swap/SwapPair";
 import { Skeleton } from "src/components/ui/Skeleton";
@@ -40,7 +39,7 @@ const V3Page = () => {
                         <SwapButton />
                     </div>
                 </div>
-                <PoolDetails pool={pool} />
+                {/* <PoolDetails pool={pool} /> */}
             </div>
         </div>
     );

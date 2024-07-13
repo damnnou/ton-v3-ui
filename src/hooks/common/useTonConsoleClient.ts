@@ -2,6 +2,7 @@ import { Api, HttpClient } from "tonapi-sdk-js";
 
 const API_KEY = "AFWGG4WGTYW3K2YAAAAKYZV76ERL7GNMX5URCRCFSMDCYSAHOBGWCL3JXDQNCLSUXMPXD5Q";
 
+/* tonApi client for fetching additional data, such as jetton balances, etc. */
 export function useTonConsoleClient() {
     const httpClient = new HttpClient({
         baseUrl: "https://testnet.tonapi.io",

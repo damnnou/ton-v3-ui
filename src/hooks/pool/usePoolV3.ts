@@ -1,104 +1,89 @@
 import { usePoolV3Contract } from "../contracts/usePoolV3Contract";
 import JSBI from "jsbi";
-import { useEffect, useState } from "react";
-import { Address } from "@ton/core";
+import { Address, OpenedContract } from "@ton/core";
 import { Jetton } from "src/sdk/src/entities/Jetton";
-import { displayContentCell } from "src/sdk/src/contracts/common/jettonContent";
-import { useJettonMinterContract } from "../contracts/useJettonMinterContract";
-import { TickInfoWrapper } from "src/sdk/src/contracts/PoolV3Contract";
-import { jettons } from "src/constants/jettons";
+import { PoolV3Contract } from "src/sdk/src/contracts/PoolV3Contract";
+import useSWR from "swr";
+import { useTonClient } from "../common/useTonClient";
+import { JettonWallet } from "src/sdk/src/contracts/common/JettonWallet";
+import { useAsyncInitialize } from "../common/useAsyncInitialize";
+import { parseJettonContent } from "src/utils/jetton/parseJettonContent";
+import { JettonMinter } from "src/sdk/src/contracts/common/JettonMinter";
 
 export interface Pool {
     jetton0: Jetton;
     jetton1: Jetton;
-    jetton0Wallet: Address;
-    jetton1Wallet: Address;
+
+    jetton0_wallet: Address;
+    jetton1_wallet: Address;
+    poolActive: boolean;
+    tickSpacing: number;
+
+    tickCurrent: number;
     sqrtRatioX96: JSBI | bigint;
     liquidity: JSBI | bigint;
-    tickCurrent: number;
-    // tickDataProvider: TickDataProvider;
-    tickSpacing: number;
-    prevTick: number;
-    nextTick: number;
-    tick: TickInfoWrapper;
-    lp_fee_base: number;
-    protocol_fee: number;
-    lp_fee_current: number;
-    balance: number;
+
+    nftv3item_counter: number;
+
+    // prevTick: number;
+    // nextTick: number;
+    // tick: TickInfoWrapper;
+    // lp_fee_base: number;
+    // protocol_fee: number;
+    // lp_fee_current: number;
+    // balance: number;
 }
 
-export function usePoolV3(poolAddres: string | undefined): Pool | undefined {
-    /* hard coded token addresses */
-    const [token0Address, setToken0Address] = useState<Address>(Address.parse(jettons.ALG_USD.address));
-    const [token1Address, setToken1Address] = useState<Address>(Address.parse(jettons.ALG_ETH.address));
+const fetchPoolData = (poolContract: OpenedContract<PoolV3Contract> | undefined) => {
+    return poolContract?.getPoolStateAndConfiguration();
+};
 
-    const [poolData, setPoolData] = useState<Pool>();
+export function usePoolV3(poolAddres: string | undefined): Pool | undefined {
+    const client = useTonClient();
 
     const poolContract = usePoolV3Contract(poolAddres);
-    const jetton0Minter = useJettonMinterContract(token0Address?.toString());
-    const jetton1Minter = useJettonMinterContract(token1Address?.toString());
 
-    // useEffect(() => {
-    //     if (!poolContract || (jetton0Minter && jetton1Minter)) return;
-    //     poolContract.getTokenAddresses().then(({ token0_address, token1_address }) => {
-    //         setToken0Address(token0_address);
-    //         setToken1Address(token1_address);
-    //     });
-    // }, [poolContract, jetton0Minter, jetton1Minter]);
+    const { data: poolData, error } = useSWR(["poolData", poolContract], () => fetchPoolData(poolContract), {
+        revalidateOnFocus: false,
+        revalidateOnMount: false,
+    });
 
-    useEffect(() => {
-        if (!poolContract || !poolAddres || !jetton0Minter || !jetton1Minter) return;
+    if (error) console.error(error);
 
-        const fetchData = async () => {
-            const { liquidity, priceSqrt: sqrtRatioX96 } = await poolContract.getPriceAndLiquidity();
-            const tickCurrent = await poolContract.getTick();
-            const { tick, prevTick, nextTick } = await poolContract.getTickInfo(tickCurrent);
-            const fees = await poolContract.getFees();
-            const { number: balance } = await poolContract.getBalance();
+    const pool = useAsyncInitialize(async () => {
+        if (!poolData || !client) return;
 
-            const jetton0Wallet = await jetton0Minter.getWalletAddress(poolContract.address);
-            const jetton1Wallet = await jetton1Minter.getWalletAddress(poolContract.address);
+        const jetton0Wallet = client.open(new JettonWallet(poolData.jetton0_wallet));
+        const jetton1Wallet = client.open(new JettonWallet(poolData.jetton1_wallet));
 
-            const jetton0Data = await displayContentCell((await jetton0Minter.getJettonData()).content);
-            const jetton1Data = await displayContentCell((await jetton1Minter.getJettonData()).content);
+        const [jetton0MinterAddress, jetton1MinterAddress] = await Promise.all([
+            jetton0Wallet.getJettonMinterAddress(),
+            jetton1Wallet.getJettonMinterAddress(),
+        ]);
 
-            if (!jetton0Data || !jetton1Data) throw new Error("Jettons not found");
+        if (!jetton0MinterAddress || !jetton1MinterAddress) throw new Error("Can't get jetton minter address");
 
-            const jetton0 = new Jetton(
-                jetton0Minter.address.toString(),
-                Number(jetton0Data.decimals),
-                jetton0Data.symbol,
-                jetton0Data.name,
-                jetton0Data.image
-            );
-            const jetton1 = new Jetton(
-                jetton1Minter.address.toString(),
-                Number(jetton1Data.decimals),
-                jetton1Data.symbol,
-                jetton1Data.name,
-                jetton1Data.image
-            );
+        const [jetton0Data, jetton1Data] = await Promise.all([
+            client.open(new JettonMinter(jetton0MinterAddress)).getJettonData(),
+            client.open(new JettonMinter(jetton1MinterAddress)).getJettonData(),
+        ]);
 
-            setPoolData({
-                jetton0,
-                jetton1,
-                jetton0Wallet,
-                jetton1Wallet,
-                sqrtRatioX96,
-                liquidity,
-                tickCurrent,
-                // tickDataProvider: new NoTickDataProvider(),
-                tickSpacing: 60,
-                prevTick,
-                nextTick,
-                tick,
-                ...fees,
-                balance,
-            });
+        return {
+            jetton0: await parseJettonContent(jetton0MinterAddress.toString(), jetton0Data.content),
+            jetton1: await parseJettonContent(jetton1MinterAddress.toString(), jetton1Data.content),
+
+            jetton0_wallet: poolData.jetton0_wallet,
+            jetton1_wallet: poolData.jetton1_wallet,
+            poolActive: poolData.pool_active,
+            tickSpacing: poolData.tick_spacing,
+
+            tickCurrent: poolData.tick,
+            sqrtRatioX96: poolData.price_sqrt,
+            liquidity: poolData.liquidity,
+
+            nftv3item_counter: poolData.nftv3item_counter,
         };
+    }, [poolData, client]);
 
-        fetchData();
-    }, [poolContract, poolAddres, jetton0Minter, jetton1Minter]);
-
-    return poolData;
+    return pool;
 }

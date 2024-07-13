@@ -3,6 +3,7 @@ import { POOL } from "src/constants/addresses";
 import { jettons } from "src/constants/jettons";
 import { useTonConnect } from "src/hooks/common/useTonConnect";
 import { useJetton } from "src/hooks/jetton/useJetton";
+import { useJettonBalance } from "src/hooks/jetton/useJettonBalance";
 import { Fraction } from "src/sdk/src/entities/Fraction";
 import { Jetton } from "src/sdk/src/entities/Jetton";
 import { JettonAmount } from "src/sdk/src/entities/JettonAmount";
@@ -160,12 +161,8 @@ export function useDerivedSwapInfo(): {
 
     const [addressA, addressB] = [inputCurrency?.address || "", outputCurrency?.address || ""];
 
-    /* should polling balances? */
-    // const inputCurrencyBalance = useJettonBalance(addressA, account);
-    // const outputCurrencyBalance = useJettonBalance(addressB, account);
-
-    const inputCurrencyBalance = undefined;
-    const outputCurrencyBalance = undefined;
+    const inputCurrencyBalance = useJettonBalance(addressA, account);
+    const outputCurrencyBalance = useJettonBalance(addressB, account);
 
     const currencyBalances = {
         [SwapField.INPUT]:

@@ -9,6 +9,7 @@ import { TonConnectUIProvider } from "@tonconnect/ui-react";
 import PoolsPage from "./pages/pools";
 import CreatePoolPage from "./pages/create-pool";
 import V3Page from "./pages/V3";
+import { TonClientProvider } from "./hooks/common/useTonClient.tsx";
 
 const router = createBrowserRouter([
     {
@@ -54,7 +55,9 @@ const manifestUrl = "https://damnnou.github.io/ton-manifest/ton-manifest.json";
 ReactDOM.createRoot(document.getElementById("root")!).render(
     <React.StrictMode>
         <TonConnectUIProvider manifestUrl={manifestUrl}>
-            <RouterProvider router={router} />
+            <TonClientProvider>
+                <RouterProvider router={router} />
+            </TonClientProvider>
         </TonConnectUIProvider>
     </React.StrictMode>
 );
