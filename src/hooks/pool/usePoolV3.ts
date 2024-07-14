@@ -61,9 +61,9 @@ export function usePoolV3(poolAddres: string | undefined): [PoolStateType, PoolS
     if (isPoolError) console.error(isPoolError);
 
     return useMemo(() => {
-        if ((isPoolLoading || isJettonsLoading) && !isPoolError) return [PoolState.LOADING, null];
-        if (!poolData?.tick_spacing || poolData?.liquidity === undefined || !jetton0 || !jetton1) return [PoolState.NOT_EXISTS, null];
-        if (poolData.pool_active === false) return [PoolState.INVALID, null];
+        if (isPoolError) return [PoolState.INVALID, null];
+        if (isPoolLoading || isJettonsLoading) return [PoolState.LOADING, null];
+        if (!poolData?.tick_spacing || poolData?.liquidity === undefined) return [PoolState.NOT_EXISTS, null];
 
         const pool = {
             jetton0,

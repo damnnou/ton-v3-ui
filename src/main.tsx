@@ -10,6 +10,7 @@ import PoolsPage from "./pages/pools";
 import CreatePoolPage from "./pages/create-pool";
 import { TonClientProvider } from "./hooks/common/useTonClient.tsx";
 import PoolPage from "./pages/pool.tsx";
+import CreatePositionPage from "./pages/create-position.tsx";
 
 const router = createBrowserRouter([
     {
@@ -37,6 +38,14 @@ const router = createBrowserRouter([
         element: (
             <App>
                 <PoolPage />
+            </App>
+        ),
+    },
+    {
+        path: "/pool/:poolId/create-position",
+        element: (
+            <App>
+                <CreatePositionPage />
             </App>
         ),
     },

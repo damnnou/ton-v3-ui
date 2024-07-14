@@ -28,11 +28,13 @@ export function useJettonBalance(jettonAddress: string | undefined, wallet: stri
 function useAccountBalances(wallet: string | null) {
     const client = useTonConsoleClient();
 
-    const { data: balances } = useSWR(["accountBalances", wallet], () => fetchBalances(client, wallet), {
+    const { data: balances, error } = useSWR(["accountBalances", wallet], () => fetchBalances(client, wallet), {
         revalidateOnFocus: false,
         revalidateOnMount: false,
         refreshInterval: 10000,
     });
+
+    if (error) console.error(error);
 
     return balances?.balances;
 }

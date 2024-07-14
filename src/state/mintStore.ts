@@ -209,21 +209,7 @@ export function useDerivedMintInfo(
         [Field.CURRENCY_B]: currencyB && token1Balance ? JettonAmount.fromRawAmount(currencyB, token1Balance) : undefined,
     };
 
-    const [poolState, poolV3] = usePoolV3(poolAddress);
-
-    const pool =
-        currencyA &&
-        currencyB &&
-        poolV3 &&
-        new Pool(
-            currencyA,
-            currencyB,
-            100,
-            poolV3.sqrtRatioX96.toString(),
-            poolV3.liquidity.toString(),
-            poolV3.tickCurrent,
-            poolV3.tickSpacing
-        );
+    const [poolState, pool] = usePoolV3(poolAddress);
 
     const noLiquidity = poolState === PoolState.NOT_EXISTS;
 

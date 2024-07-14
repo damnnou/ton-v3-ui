@@ -52,7 +52,7 @@ export const SwapButton = ({ ...props }: SwapButtonProps) => {
         );
 
     return (
-        <ActionButton onClick={swapCallback} disabled={!isValid || !!swapCallbackError}>
+        <ActionButton onClick={swapCallback} disabled={!swapCallback || !isValid || !!swapCallbackError}>
             {swapInputError ? swapInputError : "Swap"}
         </ActionButton>
     );

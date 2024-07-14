@@ -37,7 +37,9 @@ const SwapPair = () => {
         [SwapField.OUTPUT]: parsedAmountB,
     };
 
-    console.log(trade);
+    if (trade) {
+        console.log(trade);
+    }
 
     const formattedAmounts = {
         [independentField]: typedValue,

@@ -1,24 +1,31 @@
-import { useEffect, useState } from "react";
 import { useJettonMinterContract } from "../contracts/useJettonMinterContract";
-import { Address } from "@ton/core";
+import { Address, OpenedContract } from "@ton/core";
+import { JettonMinter } from "src/sdk/src/contracts/common/JettonMinter";
+import useSWR from "swr";
 
 interface Props {
     jettonAddress: string | undefined;
     ownerAddress: string | null | undefined;
 }
 
-export function useJettonWalletAddress({ jettonAddress, ownerAddress }: Props) {
-    const [jettonWalletAddress, setJettonWalletAddress] = useState<string>();
+const fetchJettonWallet = (jettonMinter: OpenedContract<JettonMinter> | undefined, ownerAddress: string | null | undefined) => {
+    if (!jettonMinter || !ownerAddress) return;
+    return jettonMinter.getWalletAddress(Address.parse(ownerAddress));
+};
 
+export function useJettonWalletAddress({ jettonAddress, ownerAddress }: Props) {
     const jettonMinter = useJettonMinterContract(jettonAddress);
 
-    useEffect(() => {
-        if (!jettonAddress || !ownerAddress || !jettonMinter) return;
+    const { data: jettonWalletAddress, error } = useSWR(
+        ["jettonWalletAddress", jettonMinter, ownerAddress],
+        () => fetchJettonWallet(jettonMinter, ownerAddress),
+        {
+            revalidateOnFocus: false,
+            revalidateOnMount: false,
+        }
+    );
 
-        jettonMinter
-            .getWalletAddress(Address.parse(ownerAddress))
-            .then((jettonWalletAddress) => setJettonWalletAddress(jettonWalletAddress.toString()));
-    }, [jettonAddress, ownerAddress, jettonMinter]);
+    if (error) console.error(error);
 
-    return jettonWalletAddress;
+    return jettonWalletAddress?.toString();
 }

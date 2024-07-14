@@ -27,7 +27,12 @@ export abstract class AbstractJetton {
    * @param symbol symbol of the currency
    * @param name of the currency
    */
-  protected constructor(decimals: number, symbol: string, name?: string, image?: string) {
+  protected constructor(
+    decimals: number,
+    symbol: string,
+    name?: string,
+    image?: string
+  ) {
     invariant(
       decimals >= 0 && decimals < 255 && Number.isInteger(decimals),
       'DECIMALS'

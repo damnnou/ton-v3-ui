@@ -1,14 +1,14 @@
 import { useCallback, useMemo } from "react";
 // import { Pool } from "../pool/usePoolV3";
-import { Address, beginCell, toNano } from "@ton/core";
+import { Address, beginCell, SendMode, toNano } from "@ton/core";
 import { ContractOpcodes } from "src/sdk/src/contracts/opCodes";
 import { parseUnits } from "src/utils/common/parseUnits";
 import { useTonConnect } from "../common/useTonConnect";
-import { useJettonWalletContract } from "../contracts/useJettonWalletContract";
 import { useJettonWalletAddress } from "../jetton/useJettonWalletAddress";
 import { ROUTER } from "src/constants/addresses";
 import { SwapCallbackState } from "src/types/swap-state";
 import { Pool } from "src/sdk/src";
+import { JettonWallet } from "src/sdk/src/contracts/common/JettonWallet";
 
 export function useSwapCallback({
     pool,
@@ -23,27 +23,22 @@ export function useSwapCallback({
 
     const jetton0Wallet = useJettonWalletAddress({ jettonAddress: pool?.jetton0.address, ownerAddress: wallet });
     const jetton1Wallet = useJettonWalletAddress({ jettonAddress: pool?.jetton1.address, ownerAddress: wallet });
-    const jetton0WalletContract = useJettonWalletContract(jetton0Wallet);
 
-    const swapRequest =
-        wallet &&
-        pool &&
-        amountOut &&
-        jetton1Wallet &&
-        beginCell()
+    const swapCallback = useCallback(() => {
+        if (!wallet || !jetton0Wallet || !jetton1Wallet || !amountIn || !pool) {
+            console.log(jetton0Wallet, jetton1Wallet, wallet, amountIn, pool);
+            return;
+        }
+        const amountToChange = parseUnits(Number(amountIn), pool.jetton0.decimals);
+
+        const swapRequest = beginCell()
             .storeUint(ContractOpcodes.POOLV3_SWAP, 32) // Request to swap
             .storeAddress(Address.parse(jetton1Wallet)) // JettonWallet attached to Router is used to identify target token
             .storeCoins(parseUnits(Number(amountOut), pool.jetton1.decimals)) // Minimum amount the we agree to get back
             .storeAddress(Address.parse(wallet)) // Address to receive result of the swap
             .endCell();
 
-    const swapCallback = useCallback(() => {
-        if (!swapRequest || !wallet || !jetton0WalletContract || !amountIn) return;
-        const amountToChange = parseUnits(Number(amountIn), pool.jetton0.decimals);
-
-        jetton0WalletContract.sendTransfer(
-            sender,
-            toNano(1.0),
+        const payload = JettonWallet.transferMessage(
             amountToChange,
             Address.parse(ROUTER),
             Address.parse(wallet),
@@ -52,14 +47,13 @@ export function useSwapCallback({
             swapRequest
         );
 
-        // const payload = JettonWallet.transferMessage(parseUnits(Number(amountIn), inputCurrency.decimals), ROUTER_ADDRESS, Address.parse(wallet), beginCell().endCell(), toNano(0.2), swapRequest)
-
-        // sender.send({
-        //     to: ROUTER_ADDRESS,
-        //     value: toNano(1.0),
-        //     body: payload,
-        // })
-    }, [swapRequest, wallet, jetton0WalletContract, amountIn, pool, sender]);
+        sender.send({
+            to: Address.parse(jetton0Wallet),
+            value: toNano(1.0),
+            body: payload,
+            sendMode: SendMode.PAY_GAS_SEPARATELY,
+        });
+    }, [wallet, jetton0Wallet, jetton1Wallet, amountIn, pool, amountOut, sender]);
 
     return useMemo(() => {
         return {
