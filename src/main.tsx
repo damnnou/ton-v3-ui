@@ -8,13 +8,13 @@ import { SwapPage } from "./pages/swap";
 import { TonConnectUIProvider } from "@tonconnect/ui-react";
 import PoolsPage from "./pages/pools";
 import CreatePoolPage from "./pages/create-pool";
-import V3Page from "./pages/V3";
 import { TonClientProvider } from "./hooks/common/useTonClient.tsx";
+import PoolPage from "./pages/pool.tsx";
 
 const router = createBrowserRouter([
     {
         path: "/",
-        element: <Navigate replace to={"/v3"} />,
+        element: <Navigate replace to={"/swap"} />,
     },
     {
         path: "/swap",
@@ -33,18 +33,18 @@ const router = createBrowserRouter([
         ),
     },
     {
-        path: "/create-pool",
+        path: "/pool/:poolId",
         element: (
             <App>
-                <CreatePoolPage />
+                <PoolPage />
             </App>
         ),
     },
     {
-        path: "/v3",
+        path: "/create-pool",
         element: (
             <App>
-                <V3Page />
+                <CreatePoolPage />
             </App>
         ),
     },

@@ -1,2 +1,2 @@
-export const ROUTER = "kQD0H-NCUpSniPnd2YZN5SXGDWEyHr9Xtf1gGVE-731qK8bF";
-export const POOL = "EQBsBAqZ5vrLbKXxryEd21vbEwvehiPK-sWQ4tIVOcVZWHFM";
+export const ROUTER = "EQAFI70iN4BKgXhbIwIc_Z0N3dHzeCdnDUCzhFSgZV2V_CWf";
+export const POOL = "EQCxEQOrU30TFk2QSj_D5cbi_fzNM8wFMnSsWUcURlXAKYQY";

@@ -5,7 +5,8 @@ import { Spinner } from "src/components/ui/Spinner";
 import { useTonConnect } from "src/hooks/common/useTonConnect";
 import { usePoolV3 } from "src/hooks/pool/usePoolV3";
 import { useSwapCallback } from "src/hooks/swap/useSwapCallback";
-import { useDerivedSwapInfo } from "src/state/swapStore";
+import { useDerivedSwapInfo, useSwapState } from "src/state/swapStore";
+import { SwapField } from "src/types/swap-field";
 
 interface SwapButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {}
 
@@ -13,13 +14,18 @@ export const SwapButton = ({ ...props }: SwapButtonProps) => {
     const { connected, network } = useTonConnect();
     const { open } = useTonConnectModal();
 
-    const { inputError: swapInputError, parsedAmount: amountIn, parsedAmountOut: amountOut, poolAddress, isExactIn } = useDerivedSwapInfo();
+    const { independentField } = useSwapState();
+    const { inputError: swapInputError, toggledTrade: trade, parsedAmount, poolAddress } = useDerivedSwapInfo();
 
-    const pool = usePoolV3(poolAddress);
+    const amountIn = independentField === SwapField.INPUT ? parsedAmount : trade?.inputAmount;
+
+    const amountOut = independentField === SwapField.OUTPUT ? parsedAmount : trade?.outputAmount;
+
+    const [, pool] = usePoolV3(poolAddress);
 
     const { callback: swapCallback, error: swapCallbackError } = useSwapCallback({
-        amountIn: isExactIn ? amountIn?.toFixed() : amountOut?.toFixed(),
-        amountOut: isExactIn ? amountOut?.toFixed() : amountIn?.toFixed(),
+        amountIn: amountIn?.toFixed(),
+        amountOut: amountOut?.toFixed(),
         pool,
     });
 

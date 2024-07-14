@@ -1,11 +1,11 @@
-import { SwapButton } from "src/components/swap/SwapButton";
-import SwapPair from "src/components/swap/SwapPair";
+import { useParams } from "react-router-dom";
 import { Skeleton } from "src/components/ui/Skeleton";
-import { POOL } from "src/constants/addresses";
 import { usePoolV3 } from "src/hooks/pool/usePoolV3";
 
-const V3Page = () => {
-    const pool = usePoolV3(POOL);
+const PoolPage = () => {
+    // const [, pool] = usePoolV3(POOL);
+    const { poolId } = useParams();
+    const [, pool] = usePoolV3(poolId);
 
     console.log(pool);
 
@@ -33,16 +33,16 @@ const V3Page = () => {
                 </h2>
             </div>
             <div className="flex max-lg:flex-col gap-4">
-                <div className="relative w-3/4 rounded-2xl transition-all duration-300 bg-light delay-50 overflow-hidden shadow-2xl shadow-purple-500/10 flex flex-col sm:gap-4 gap-2 border-2 border-border-light sm:p-4 sm:rounded-3xl sm:bg-light p-2 h-[318px] sm:h-[350px]">
+                {/* <div className="relative w-3/4 rounded-2xl transition-all duration-300 bg-light delay-50 overflow-hidden shadow-2xl shadow-purple-500/10 flex flex-col sm:gap-4 gap-2 border-2 border-border-light sm:p-4 sm:rounded-3xl sm:bg-light p-2 h-[318px] sm:h-[350px]">
                     <div className="flex flex-col sm:gap-4 gap-2">
                         <SwapPair />
                         <SwapButton />
                     </div>
-                </div>
+                </div> */}
                 {/* <PoolDetails pool={pool} /> */}
             </div>
         </div>
     );
 };
 
-export default V3Page;
+export default PoolPage;

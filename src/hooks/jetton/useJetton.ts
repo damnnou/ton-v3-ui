@@ -3,6 +3,7 @@ import { useTokensState } from "src/state/tokensStore";
 import { Jetton } from "src/sdk/src/entities/Jetton";
 import { useJettonMinterContract } from "../contracts/useJettonMinterContract";
 import { parseJettonContent } from "src/utils/jetton/parseJettonContent";
+import { useJettonWalletContract } from "../contracts/useJettonWalletContract";
 
 export function useJetton(jettonMinterAddress: string | undefined): Jetton | undefined {
     const [jetton, setJetton] = useState<Jetton>();
@@ -29,18 +30,17 @@ export function useJetton(jettonMinterAddress: string | undefined): Jetton | und
     return jetton;
 }
 
-// export function useJettonByJettonWallet(jettonWalletAddress: AddressType | undefined) {
-//     const [jettonAddress, setJettonAddress] = useState<AddressType>();
+export function useJettonByJettonWallet(jettonWalletAddress: string | undefined) {
+    const jettonWallet = useJettonWalletContract(jettonWalletAddress);
 
-//     const jettonWallet = useJettonWalletContract(jettonWalletAddress);
+    const [jettonAddress, setJettonAddress] = useState<string>();
+    const jetton = useJetton(jettonAddress);
 
-//     const jetton = useJetton(jettonAddress);
+    useEffect(() => {
+        if (!jettonWallet) return;
 
-//     useEffect(() => {
-//         if (!jettonWallet) return;
+        jettonWallet.getJettonMinterAddress().then((data) => setJettonAddress(data.toString()));
+    }, [jettonWallet]);
 
-//         jettonWallet.getData().then((data) => setJettonAddress(data.jettonMinterAddress));
-//     }, [jettonWallet]);
-
-//     return jetton;
-// }
+    return jetton;
+}

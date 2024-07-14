@@ -6,7 +6,7 @@ import { MenuState } from "src/types/token-menu";
 import { SwitchButton } from "src/components/ui/Button";
 
 const SwapPair = () => {
-    const { parsedAmount, parsedAmountOut, currencies, isExactIn } = useDerivedSwapInfo();
+    const { parsedAmount, toggledTrade: trade, currencies } = useDerivedSwapInfo();
 
     const baseCurrency = currencies[SwapField.INPUT];
     const quoteCurrency = currencies[SwapField.OUTPUT];
@@ -28,28 +28,24 @@ const SwapPair = () => {
         },
         [onUserInput]
     );
+    const parsedAmountA = independentField === SwapField.INPUT ? parsedAmount : trade?.inputAmount;
 
-    const parsedAmountA = !isExactIn ? parsedAmountOut : parsedAmount;
+    const parsedAmountB = independentField === SwapField.OUTPUT ? parsedAmount : trade?.outputAmount;
 
-    const parsedAmountB = isExactIn ? parsedAmountOut : parsedAmount;
+    const parsedAmounts = {
+        [SwapField.INPUT]: parsedAmountA,
+        [SwapField.OUTPUT]: parsedAmountB,
+    };
 
-    const parsedAmounts = { [SwapField.INPUT]: parsedAmountA, [SwapField.OUTPUT]: parsedAmountB };
-
-    // const maxInputAmount: JettonAmount<Jetton> | undefined = maxAmountSpend(currencyBalances[SwapField.INPUT]);
-
-    // const showMaxButton = Boolean(maxInputAmount?.greaterThan(0) && !parsedAmounts[SwapField.INPUT]?.equalTo(maxInputAmount));
-
-    // const handleMaxInput = useCallback(() => {
-    //     maxInputAmount && onUserInput(SwapField.INPUT, maxInputAmount.toExact());
-    // }, [maxInputAmount, onUserInput]);
+    console.log(trade);
 
     const formattedAmounts = {
         [independentField]: typedValue,
-        [dependentField]: parsedAmounts[dependentField]?.toFixed() ?? "",
+        [dependentField]: parsedAmounts[dependentField]?.toFixed(),
     };
 
     return (
-        <div className="flex flex-col md:gap-4 gap-2 relative">
+        <div className="flex flex-col sm:gap-4 gap-2 relative">
             <TokenCard
                 value={formattedAmounts[SwapField.INPUT] || ""}
                 currency={baseCurrency}

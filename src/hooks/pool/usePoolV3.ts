@@ -4,11 +4,10 @@ import { Address, OpenedContract } from "@ton/core";
 import { Jetton } from "src/sdk/src/entities/Jetton";
 import { PoolV3Contract } from "src/sdk/src/contracts/PoolV3Contract";
 import useSWR from "swr";
-import { useTonClient } from "../common/useTonClient";
-import { JettonWallet } from "src/sdk/src/contracts/common/JettonWallet";
-import { useAsyncInitialize } from "../common/useAsyncInitialize";
-import { parseJettonContent } from "src/utils/jetton/parseJettonContent";
-import { JettonMinter } from "src/sdk/src/contracts/common/JettonMinter";
+import { PoolState, PoolStateType } from "src/types/pool-state";
+import { useMemo, useState } from "react";
+import { useJettonByJettonWallet } from "../jetton/useJetton";
+import { Pool as PoolSDK } from "src/sdk/src";
 
 export interface Pool {
     jetton0: Jetton;
@@ -38,39 +37,37 @@ const fetchPoolData = (poolContract: OpenedContract<PoolV3Contract> | undefined)
     return poolContract?.getPoolStateAndConfiguration();
 };
 
-export function usePoolV3(poolAddres: string | undefined): Pool | undefined {
-    const client = useTonClient();
-
+export function usePoolV3(poolAddres: string | undefined): [PoolStateType, PoolSDK | null] {
     const poolContract = usePoolV3Contract(poolAddres);
+    const [jettonWallets, setJettonWallets] = useState<string[]>();
 
-    const { data: poolData, error } = useSWR(["poolData", poolContract], () => fetchPoolData(poolContract), {
+    const jetton0 = useJettonByJettonWallet(jettonWallets?.[0]);
+    const jetton1 = useJettonByJettonWallet(jettonWallets?.[1]);
+
+    const {
+        data: poolData,
+        error: isPoolError,
+        isLoading: isPoolLoading,
+    } = useSWR(["poolData", poolContract], () => fetchPoolData(poolContract), {
         revalidateOnFocus: false,
         revalidateOnMount: false,
+        onSuccess(data) {
+            if (data) setJettonWallets([data.jetton0_wallet.toString(), data.jetton1_wallet.toString()]);
+        },
     });
 
-    if (error) console.error(error);
+    const isJettonsLoading = !jetton0 || !jetton1;
 
-    const pool = useAsyncInitialize(async () => {
-        if (!poolData || !client) return;
+    if (isPoolError) console.error(isPoolError);
 
-        const jetton0Wallet = client.open(new JettonWallet(poolData.jetton0_wallet));
-        const jetton1Wallet = client.open(new JettonWallet(poolData.jetton1_wallet));
+    return useMemo(() => {
+        if ((isPoolLoading || isJettonsLoading) && !isPoolError) return [PoolState.LOADING, null];
+        if (!poolData?.tick_spacing || poolData?.liquidity === undefined || !jetton0 || !jetton1) return [PoolState.NOT_EXISTS, null];
+        if (poolData.pool_active === false) return [PoolState.INVALID, null];
 
-        const [jetton0MinterAddress, jetton1MinterAddress] = await Promise.all([
-            jetton0Wallet.getJettonMinterAddress(),
-            jetton1Wallet.getJettonMinterAddress(),
-        ]);
-
-        if (!jetton0MinterAddress || !jetton1MinterAddress) throw new Error("Can't get jetton minter address");
-
-        const [jetton0Data, jetton1Data] = await Promise.all([
-            client.open(new JettonMinter(jetton0MinterAddress)).getJettonData(),
-            client.open(new JettonMinter(jetton1MinterAddress)).getJettonData(),
-        ]);
-
-        return {
-            jetton0: await parseJettonContent(jetton0MinterAddress.toString(), jetton0Data.content),
-            jetton1: await parseJettonContent(jetton1MinterAddress.toString(), jetton1Data.content),
+        const pool = {
+            jetton0,
+            jetton1,
 
             jetton0_wallet: poolData.jetton0_wallet,
             jetton1_wallet: poolData.jetton1_wallet,
@@ -83,7 +80,17 @@ export function usePoolV3(poolAddres: string | undefined): Pool | undefined {
 
             nftv3item_counter: poolData.nftv3item_counter,
         };
-    }, [poolData, client]);
 
-    return pool;
+        const poolSDK = new PoolSDK(
+            jetton0,
+            jetton1,
+            100,
+            poolData.price_sqrt.toString(),
+            poolData.liquidity.toString(),
+            poolData.tick,
+            60
+        );
+
+        return [PoolState.EXISTS, poolSDK];
+    }, [isPoolLoading, isJettonsLoading, isPoolError, poolData, jetton0, jetton1]);
 }

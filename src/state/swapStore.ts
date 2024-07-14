@@ -1,14 +1,20 @@
+import JSBI from "jsbi";
 import { useCallback, useMemo } from "react";
 import { POOL } from "src/constants/addresses";
 import { jettons } from "src/constants/jettons";
 import { useTonConnect } from "src/hooks/common/useTonConnect";
 import { useJetton } from "src/hooks/jetton/useJetton";
 import { useJettonBalance } from "src/hooks/jetton/useJettonBalance";
-import { Fraction } from "src/sdk/src/entities/Fraction";
+import { useBestTradeExactIn, useBestTradeExactOut } from "src/hooks/swap/useBestTrade";
+import useSwapSlippageTolerance from "src/hooks/swap/useSwapSlippageTolerance";
+import { TradeType } from "src/sdk/src";
 import { Jetton } from "src/sdk/src/entities/Jetton";
 import { JettonAmount } from "src/sdk/src/entities/JettonAmount";
 import { Percent } from "src/sdk/src/entities/Percent";
+import { Trade } from "src/sdk/src/entities/trade";
+import { TickMath } from "src/sdk/src/utils/tickMath";
 import { SwapField, SwapFieldType } from "src/types/swap-field";
+import { TradeStateType } from "src/types/trade-state";
 import { parseUnits } from "src/utils/common/parseUnits";
 import { create } from "zustand";
 
@@ -119,15 +125,14 @@ export function useDerivedSwapInfo(): {
     currencies: { [field in SwapFieldType]?: Jetton };
     currencyBalances: { [field in SwapFieldType]?: JettonAmount<Jetton> };
     parsedAmount: JettonAmount<Jetton> | undefined;
-    parsedAmountOut: JettonAmount<Jetton> | undefined;
     inputError?: string;
-    // tradeState: { trade: Trade<Jetton, Jetton, TradeType> | null; state: TradeStateType; fee?: bigint[] | null }
-    // toggledTrade: Trade<Jetton, Jetton, TradeType> | undefined
+    tradeState: { trade: Trade<Jetton, Jetton, TradeType> | null; state: TradeStateType; fee?: bigint[] | null };
+    toggledTrade: Trade<Jetton, Jetton, TradeType> | undefined;
     tickAfterSwap: number | null | undefined;
     allowedSlippage: Percent;
-    poolFee: number | undefined;
-    tick: number | undefined;
-    tickSpacing: number | undefined;
+    // poolFee: number | undefined;
+    // tick: number | undefined;
+    // tickSpacing: number | undefined;
     poolAddress: string | undefined;
     isExactIn: boolean;
 } {
@@ -149,15 +154,10 @@ export function useDerivedSwapInfo(): {
         [typedValue, isExactIn, inputCurrency, outputCurrency]
     );
 
-    const currentK = 1.013171225937183; // 1000 / 987
-    const inverseK = new Fraction(987, 1000);
+    const bestTradeExactIn = useBestTradeExactIn(isExactIn ? parsedAmount : undefined, outputCurrency ?? undefined);
+    const bestTradeExactOut = useBestTradeExactOut(inputCurrency ?? undefined, !isExactIn ? parsedAmount : undefined);
 
-    const parsedAmountOut = parsedAmount?.multiply(inverseK);
-
-    // const bestTradeExactIn = useBestTradeExactIn(isExactIn ? parsedAmount : undefined, outputCurrency ?? undefined)
-    // const bestTradeExactOut = useBestTradeExactOut(inputCurrency ?? undefined, !isExactIn ? parsedAmount : undefined)
-
-    // const trade = (isExactIn ? bestTradeExactIn : bestTradeExactOut) ?? undefined
+    const trade = (isExactIn ? bestTradeExactIn : bestTradeExactOut) ?? undefined;
 
     const [addressA, addressB] = [inputCurrency?.address || "", outputCurrency?.address || ""];
 
@@ -189,17 +189,18 @@ export function useDerivedSwapInfo(): {
         inputError = inputError ?? `Select a token`;
     }
 
-    // const toggledTrade = trade.trade ?? undefined
+    const toggledTrade = trade.trade ?? undefined;
 
-    // const tickAfterSwap = trade.priceAfterSwap && TickMath.getTickAtSqrtRatio(JSBI.BigInt(trade.priceAfterSwap[trade.priceAfterSwap.length - 1].toString()))
+    const tickAfterSwap =
+        trade.priceAfterSwap && TickMath.getTickAtSqrtRatio(JSBI.BigInt(trade.priceAfterSwap[trade.priceAfterSwap.length - 1].toString()));
 
-    // const allowedSlippage = useSwapSlippageTolerance(toggledTrade)
+    const allowedSlippage = useSwapSlippageTolerance(toggledTrade);
 
-    // const [balanceIn, amountIn] = [currencyBalances[SwapField.INPUT], toggledTrade?.maximumAmountIn(allowedSlippage)]
+    const [balanceIn, amountIn] = [currencyBalances[SwapField.INPUT], toggledTrade?.maximumAmountIn(allowedSlippage)];
 
-    // if (balanceIn && amountIn && balanceIn.lessThan(amountIn)) {
-    //     inputError = `Insufficient ${amountIn.currency.symbol} balance`
-    // }
+    if (balanceIn && amountIn && balanceIn.lessThan(amountIn)) {
+        inputError = `Insufficient ${amountIn.jetton.symbol} balance`;
+    }
 
     // const isWrap = currencies.INPUT && currencies.OUTPUT && currencies.INPUT.wrapped.equals(currencies.OUTPUT.wrapped)
 
@@ -214,13 +215,12 @@ export function useDerivedSwapInfo(): {
         currencies,
         currencyBalances,
         parsedAmount,
-        parsedAmountOut,
         inputError,
         isExactIn,
-        // tradeState: trade,
-        // toggledTrade,
-        // tickAfterSwap,
-        // allowedSlippage,
+        tradeState: trade,
+        toggledTrade,
+        tickAfterSwap,
+        allowedSlippage,
         // poolFee: globalState && globalState[2],
         // tick: globalState && globalState[1],
         // tickSpacing: tickSpacing,
