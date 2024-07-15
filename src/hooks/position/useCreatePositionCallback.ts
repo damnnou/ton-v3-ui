@@ -35,8 +35,7 @@ export function useCreatePositionCallback({
             !wallet ||
             !jetton0Wallet ||
             !jetton1Wallet ||
-            !jetton0Amount ||
-            !jetton1Amount ||
+            (!jetton0Amount && !jetton1Amount) ||
             !pool ||
             !position ||
             !routerJetton0Wallet ||
@@ -49,8 +48,8 @@ export function useCreatePositionCallback({
         const mintRequest0 = beginCell()
             .storeUint(ContractOpcodes.POOLV3_FUND_ACCOUNT, 32) // Request to minting part 1
             .storeAddress(Address.parse(routerJetton1Wallet)) // Jetton1 Wallet attached to Router is used to identify target token
-            .storeCoins(parseUnits(jetton0Amount, pool.jetton0.decimals))
-            .storeCoins(parseUnits(jetton1Amount, pool.jetton1.decimals))
+            .storeCoins(parseUnits(jetton0Amount || "0", pool.jetton0.decimals))
+            .storeCoins(parseUnits(jetton1Amount || "0", pool.jetton1.decimals))
             .storeUint(BigInt(position.liquidity.toString()), 128) // Liquidity. First transaction don't want actully to mint anything.
             .storeInt(BigInt(position.tickLower.toString()), 24) // Min tick.  Actually for the part 1 could be 0 it is ignored
             .storeInt(BigInt(position.tickUpper.toString()), 24) // Max tick.  Actually for the part 1 could be 0 it is ignored
@@ -59,15 +58,15 @@ export function useCreatePositionCallback({
         const mintRequest1 = beginCell()
             .storeUint(ContractOpcodes.POOLV3_FUND_ACCOUNT, 32) // Request to minting part 2
             .storeAddress(Address.parse(routerJetton0Wallet)) // Jetton1 Wallet attached to Router is used to identify target token
-            .storeCoins(parseUnits(jetton0Amount, pool.jetton0.decimals))
-            .storeCoins(parseUnits(jetton1Amount, pool.jetton1.decimals))
+            .storeCoins(parseUnits(jetton0Amount || "0", pool.jetton0.decimals))
+            .storeCoins(parseUnits(jetton1Amount || "0", pool.jetton1.decimals))
             .storeUint(BigInt(position.liquidity.toString()), 128) // Liquidity to mint
             .storeInt(BigInt(position.tickLower.toString()), 24) // Min tick.
             .storeInt(BigInt(position.tickUpper.toString()), 24) // Max tick.
             .endCell();
 
         const payload0 = JettonWallet.transferMessage(
-            parseUnits(jetton0Amount, pool.jetton0.decimals),
+            parseUnits(jetton0Amount || "0", pool.jetton0.decimals),
             Address.parse(ROUTER),
             Address.parse(wallet),
             new Cell(),
@@ -76,7 +75,7 @@ export function useCreatePositionCallback({
         );
 
         const payload1 = JettonWallet.transferMessage(
-            parseUnits(jetton1Amount, pool.jetton0.decimals),
+            parseUnits(jetton1Amount || "0", pool.jetton0.decimals),
             Address.parse(ROUTER),
             Address.parse(wallet),
             new Cell(),

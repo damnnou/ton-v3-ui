@@ -1,8 +1,9 @@
+import { Signal, SignalHigh, SignalLow, SignalMedium, Tally2, Tally3, Tally4, Tally5 } from "lucide-react";
 import { useMemo } from "react";
 import { Button } from "src/components/ui/Button";
 import { Jetton } from "src/sdk/src";
 import { IDerivedMintInfo, useMintActionHandlers, useMintState } from "src/state/mintStore";
-import { PresetProfits, Presets, PresetsArgs } from "src/types/presets";
+import { PresetProfits, Presets, PresetsArgs, PresetsType } from "src/types/presets";
 
 interface RangeSidebarProps {
     currencyA: Jetton | undefined;
@@ -102,15 +103,30 @@ const PresetTabs = ({ currencyA, currencyB, mintInfo }: RangeSidebarProps) => {
         }
     }
 
+    const renderPresetLogo = (rangeType: PresetsType) => {
+        switch (rangeType) {
+            case Presets.RISK:
+                return <Tally2 className="ml-3 text-pink-500" />;
+            case Presets.NORMAL:
+                return <Tally3 className="ml-2 text-pink-400" />;
+            case Presets.SAFE:
+                return <Tally4 className="text-pink-300" />;
+            case Presets.FULL:
+                return <Tally5 className="text-pink-200" />;
+        }
+    };
+
     return (
-        <div className="flex h-fit w-fit bg-card rounded-3xl p-1">
+        <div className="flex h-fit w-full gap-4 bg-card rounded-3xl p-1">
             {presets.map((range) => (
                 <Button
-                    variant={preset === range.type ? "iconActive" : "icon"}
+                    className="flex flex-col gap-2 items-center w-1/4 h-[100px] border border-border-light"
+                    variant={preset === range.type ? "outlineActive" : "outline"}
                     size={"sm"}
                     key={`preset-range-${range.title}`}
                     onClick={() => onPresetSelect(range)}
                 >
+                    {renderPresetLogo(range.type)}
                     {range.title}
                 </Button>
             ))}

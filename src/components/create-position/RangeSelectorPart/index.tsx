@@ -68,15 +68,14 @@ const RangeSelectorPart = ({
     }, []);
 
     return (
-        <div>
+        <div className="w-fit">
             <div className="font-bold text-xs mb-3">{title.toUpperCase()}</div>
             <div className="flex relative">
                 <Button
                     variant={"ghost"}
-                    size={"sm"}
                     onClick={handleDecrement}
                     disabled={decrementDisabled || disabled}
-                    className="border border-card-border rounded-xl rounded-r-none"
+                    className="border border-border-light rounded-xl rounded-r-none h-12"
                 >
                     -
                 </Button>
@@ -92,15 +91,14 @@ const RangeSelectorPart = ({
                         updateSelectedPreset(null);
                     }}
                     placeholder={"0.00"}
-                    className="w-full bg-card-dark border-y border-x-0 border-card-border rounded-none text-sm h-[36px]"
+                    className="w-full bg-dark border-y border-x-0 border-border-light text-center rounded-none h-12 outline-none"
                 />
 
                 <Button
                     variant={"ghost"}
-                    size={"sm"}
                     onClick={handleIncrement}
                     disabled={incrementDisabled || disabled}
-                    className="border border-card-border rounded-xl rounded-l-none"
+                    className="border border-border-light rounded-xl rounded-l-none h-12"
                 >
                     +
                 </Button>

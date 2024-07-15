@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 import { Field, Jetton } from "src/sdk/src";
 import { IDerivedMintInfo, useMintActionHandlers, useMintState } from "src/state/mintStore";
-import EnterAmountCard from "../EnterAmountsCard";
-import EnterAmountsCard from "../EnterAmountsCard";
+import TokenCard from "src/components/swap/TokenCard";
+import { MenuState } from "src/types/token-menu";
 
 interface EnterAmountsProps {
     currencyA: Jetton | undefined;
@@ -28,29 +28,32 @@ const EnterAmounts = ({ currencyA, currencyB, mintInfo }: EnterAmountsProps) => 
     }, []);
 
     return (
-        <div className="flex flex-col md:flex-row lg:flex-col gap-2">
+        <div className="flex flex-col gap-4">
             <div className="flex w-full relative">
-                <EnterAmountsCard
+                <TokenCard
                     currency={currencyA}
+                    handleValueChange={onFieldAInput}
                     value={formattedAmounts[Field.CURRENCY_A]}
-                    handleChange={(value) => onFieldAInput(value)}
-                    // needApprove={allowanceA}
+                    menuType={MenuState.CLOSED}
                 />
                 {mintInfo.depositADisabled && (
-                    <div className="absolute left-0 top-0 flex items-center justify-center w-full h-full bg-card-dark/70 rounded-3xl">
-                        For selected range this deposit is disabled
+                    <div className="flex flex-col absolute font-bold text-lg left-0 top-0 items-center justify-center w-full h-full bg-dark/90 rounded-2xl">
+                        <span>For selected range</span>
+                        <span>this deposit is disabled</span>
                     </div>
                 )}
             </div>
             <div className="flex w-full relative">
-                <EnterAmountCard
+                <TokenCard
                     currency={currencyB}
+                    handleValueChange={onFieldBInput}
                     value={formattedAmounts[Field.CURRENCY_B]}
-                    handleChange={(value) => onFieldBInput(value)}
+                    menuType={MenuState.CLOSED}
                 />
                 {mintInfo.depositBDisabled && (
-                    <div className="absolute left-0 top-0 flex items-center justify-center w-full h-full bg-card-dark/70 rounded-3xl">
-                        For selected range this deposit is disabled
+                    <div className="flex flex-col absolute font-bold text-lg left-0 top-0 items-center justify-center w-full h-full bg-dark/90 rounded-2xl">
+                        <span>For selected range</span>
+                        <span>this deposit is disabled</span>
                     </div>
                 )}
             </div>

@@ -49,7 +49,7 @@ const RangeSelector = ({
 
     return (
         <>
-            <div className="flex gap-4">
+            <div className="flex justify-center w-full gap-24">
                 <RangeSelectorPart
                     value={mintInfo.ticksAtLimit[Bound.LOWER] ? "0" : leftPrice?.toSignificant(5) ?? ""}
                     onUserInput={onLeftRangeInput}

@@ -27,8 +27,8 @@ const PoolPage = () => {
     }
 
     return (
-        <div className="w-full flex flex-col gap-6 py-20 animate-fade-in">
-            <section className="flex w-full items-center justify-between p-8 rounded-3xl border-0 border-border-light bg-light">
+        <div className="w-full flex flex-col gap-6 py-12 animate-fade-in">
+            <section className="flex w-full items-center justify-between p-8 rounded-3xl border-0 border-border-light bg-light shadow-2xl shadow-primary-red/10">
                 <div className="flex gap-8">
                     <div className="flex w-fit items-center">
                         <JettonLogo jetton={jetton0} size={42} />
@@ -86,11 +86,11 @@ const PoolPage = () => {
                                 <p>You don't have positions for this pool</p>
                                 <p>Let's create one!</p>
                             </div>
-                            <Button className="rounded-xl">
-                                <Link className="flex gap-2" to={`/pool/${poolId}/create-position`}>
+                            <Link className="flex gap-2" to={`/pool/${poolId}/create-position`}>
+                                <Button className="rounded-xl">
                                     Create position <ArrowRight size={20} />
-                                </Link>
-                            </Button>
+                                </Button>
+                            </Link>
                         </div>
                     </div>
                 </div>
