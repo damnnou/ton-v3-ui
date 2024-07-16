@@ -34,11 +34,15 @@ export function useAllPositions({
     const tonClient = useTonClient();
     const client = useTonConsoleClient();
 
-    const { data, isLoading: isAllPositionLoading } = useSWR(["allPositions", wallet], () => fetchAllNFTs(client, poolAddress, wallet), {
-        revalidateOnFocus: false,
-        revalidateOnMount: false,
-        refreshInterval: 10000,
-    });
+    const { data, isLoading: isAllPositionLoading } = useSWR(
+        ["allPositions", wallet, poolAddress],
+        () => fetchAllNFTs(client, poolAddress, wallet),
+        {
+            revalidateOnFocus: false,
+            revalidateOnMount: false,
+            refreshInterval: 10000,
+        }
+    );
 
     useEffect(() => {
         if (!pool || !tonClient || !data) return;

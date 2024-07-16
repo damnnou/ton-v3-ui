@@ -1,10 +1,12 @@
 import { useMemo } from "react";
-import { Fraction, TradeType } from "src/sdk/src";
+import { Fraction, Pool, Route, TradeType } from "src/sdk/src";
 import { Jetton } from "src/sdk/src/entities/Jetton";
 import { JettonAmount } from "src/sdk/src/entities/JettonAmount";
 import { Trade } from "src/sdk/src/entities/trade";
 import { TradeState, TradeStateType } from "src/types/trade-state";
-import { useAllRoutes } from "./useAllRoutes";
+
+// TODO: Remove this
+import BigNumber from "bignumber.js";
 
 // const DEFAULT_GAS_QUOTE = 2_000_000
 
@@ -15,26 +17,18 @@ import { useAllRoutes } from "./useAllRoutes";
  */
 export function useBestTradeExactIn(
     amountIn?: JettonAmount<Jetton>,
-    currencyOut?: Jetton
+    currencyOut?: Jetton,
+    pool?: Pool | null
 ): {
     state: TradeStateType;
     trade: Trade<Jetton, Jetton, TradeType.EXACT_INPUT> | null;
     fee?: bigint[] | null;
     priceAfterSwap?: bigint[] | null;
 } {
-    const { routes, loading: routesLoading } = useAllRoutes(amountIn?.jetton, currencyOut);
-    // const {
-    //     data: quotesResults,
-    //     isLoading: isQuotesLoading,
-    //     refetch,
-    // } = useQuotesResults({
-    //     exactInput: true,
-    //     amountIn,
-    //     currencyOut,
-    // });
+    // const { routes, loading: routesLoading } = useAllRoutes(amountIn?.jetton, currencyOut);
 
     const trade = useMemo(() => {
-        if (!amountIn || !currencyOut) {
+        if (!amountIn || !currencyOut || !pool) {
             return {
                 state: TradeState.INVALID,
                 trade: null,
@@ -42,74 +36,32 @@ export function useBestTradeExactIn(
             };
         }
 
-        if (routesLoading) {
-            return {
-                state: TradeState.LOADING,
-                trade: null,
-            };
-        }
+        const route = new Route([pool], amountIn.jetton, currencyOut);
 
-        // const { bestRoute, amountOut, fee, priceAfterSwap } = [].reduce(
-        //     (
-        //         currentBest: {
-        //             bestRoute: Route<Jetton, Jetton> | null;
-        //             amountOut: any | null;
-        //             fee: bigint[] | null;
-        //             priceAfterSwap: bigint[] | null;
-        //         },
-        //         { result }: any,
-        //         i
-        //     ) => {
-        //         if (!result) return currentBest;
+        const x = BigNumber(amountIn.toFixed());
+        const L = BigNumber(pool.liquidity.toString());
+        const sp = BigNumber(pool.sqrtRatioX96.toString()).div(BigNumber(2).pow(96));
+        const num: BigNumber = L.pow(BigNumber(2));
+        const denum: BigNumber = L.div(sp).plus(BigNumber((-x).toString()));
+        const y: BigNumber = num.div(denum).plus(L.times(sp));
 
-        //         if (currentBest.amountOut === null) {
-        //             return {
-        //                 bestRoute: routes[i],
-        //                 amountOut: result[0],
-        //                 fee: result[5],
-        //                 priceAfterSwap: result[2],
-        //             };
-        //         } else if (currentBest.amountOut < result[0]) {
-        //             return {
-        //                 bestRoute: routes[i],
-        //                 amountOut: result[0],
-        //                 fee: result[5],
-        //                 priceAfterSwap: result[2],
-        //             };
-        //         }
+        const outputAmount = BigInt(y.toFixed(0));
 
-        //         return currentBest;
-        //     },
-        //     {
-        //         bestRoute: null,
-        //         amountOut: null,
-        //         fee: null,
-        //         priceAfterSwap: null,
-        //     }
-        // );
-
-        // if (!amountOut) {
-        //     return {
-        //         state: TradeState.NO_ROUTE_FOUND,
-        //         trade: null,
-        //         fee: null,
-        //         priceAfterSwap: null,
-        //     };
-        // }
+        console.log("outputAmount", outputAmount);
 
         return {
             state: TradeState.VALID,
             fee: [100n],
             trade: Trade.createUncheckedTrade({
-                route: routes[0],
+                route,
                 tradeType: TradeType.EXACT_INPUT,
                 inputAmount: amountIn,
-                outputAmount: JettonAmount.fromRawAmount(currencyOut, amountIn.quotient).multiply(new Fraction(987, 1000)), // hardcode price
+                outputAmount: JettonAmount.fromRawAmount(currencyOut, outputAmount.toString()),
             }),
             priceAfterSwap: null,
             refetch: undefined,
         };
-    }, [amountIn, currencyOut, routes, routesLoading]);
+    }, [amountIn, currencyOut, pool]);
 
     return trade;
 }
@@ -121,17 +73,18 @@ export function useBestTradeExactIn(
  */
 export function useBestTradeExactOut(
     currencyIn?: Jetton,
-    amountOut?: JettonAmount<Jetton>
+    amountOut?: JettonAmount<Jetton>,
+    pool?: Pool | null
 ): {
     state: TradeStateType;
     trade: Trade<Jetton, Jetton, TradeType.EXACT_OUTPUT> | null;
     fee?: bigint[] | null;
     priceAfterSwap?: bigint[] | null;
 } {
-    const { routes, loading: routesLoading } = useAllRoutes(currencyIn, amountOut?.jetton);
+    // const { routes, loading: routesLoading } = useAllRoutes(currencyIn, amountOut?.jetton);
 
     const trade = useMemo(() => {
-        if (!amountOut || !currencyIn) {
+        if (!amountOut || !currencyIn || !pool) {
             return {
                 state: TradeState.INVALID,
                 trade: null,
@@ -139,66 +92,13 @@ export function useBestTradeExactOut(
             };
         }
 
-        if (routesLoading) {
-            return {
-                state: TradeState.LOADING,
-                trade: null,
-            };
-        }
-
-        // const { bestRoute, amountIn, fee, priceAfterSwap } = [].reduce(
-        //     (
-        //         currentBest: {
-        //             bestRoute: Route<Jetton, Jetton> | null;
-        //             amountIn: any | null;
-        //             fee: bigint[] | null;
-        //             priceAfterSwap: bigint[] | null;
-        //         },
-        //         { result }: any,
-        //         i
-        //     ) => {
-        //         if (!result) return currentBest;
-
-        //         if (currentBest.amountIn === null) {
-        //             return {
-        //                 bestRoute: routes[i],
-        //                 amountIn: result[1],
-        //                 fee: result[5],
-        //                 priceAfterSwap: result[2],
-        //             };
-        //         } else if (currentBest.amountIn > result[0]) {
-        //             return {
-        //                 bestRoute: routes[i],
-        //                 amountIn: result[1],
-        //                 fee: result[5],
-        //                 priceAfterSwap: result[2],
-        //             };
-        //         }
-
-        //         return currentBest;
-        //     },
-        //     {
-        //         bestRoute: null,
-        //         amountIn: null,
-        //         fee: null,
-        //         priceAfterSwap: null,
-        //     }
-        // );
-
-        // if (!bestRoute || !amountIn) {
-        //     return {
-        //         state: TradeState.NO_ROUTE_FOUND,
-        //         trade: null,
-        //         fee: null,
-        //         priceAfterSwap,
-        //     };
-        // }
+        const route = new Route([pool], currencyIn, amountOut.jetton);
 
         return {
             state: TradeState.VALID,
             fee: [100n],
             trade: Trade.createUncheckedTrade({
-                route: routes[0],
+                route,
                 tradeType: TradeType.EXACT_OUTPUT,
                 inputAmount: JettonAmount.fromRawAmount(currencyIn, amountOut.quotient).multiply(new Fraction(1000, 987)), // hardcode price
                 outputAmount: amountOut,
@@ -206,7 +106,7 @@ export function useBestTradeExactOut(
             priceAfterSwap: null,
             refetch: undefined,
         };
-    }, [amountOut, currencyIn, routes, routesLoading]);
+    }, [amountOut, currencyIn, pool]);
 
     return trade;
 }

@@ -1,4 +1,5 @@
 export enum ManageLiquidity {
-    ADD = 'add',
-    INCREASE = 'increase',
+    ADD = "add",
+    INCREASE = "increase",
+    REMOVE = "remove",
 }

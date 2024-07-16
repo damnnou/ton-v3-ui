@@ -67,7 +67,7 @@ const TokenRatio = ({ mintInfo }: TokenRatioProps) => {
                         }`}
                         style={{ width: `${token0Ratio}%` }}
                     >
-                        <JettonLogo jetton={currencyA} size={26} className="absolute left-1" />
+                        <JettonLogo jetton={currencyA} size={24} className="absolute left-1" />
                         {`${Number(token0Ratio).toFixed()}%`}
                     </div>
                 )}
@@ -79,7 +79,7 @@ const TokenRatio = ({ mintInfo }: TokenRatioProps) => {
                         style={{ width: `${token1Ratio}%` }}
                     >
                         {`${Number(token1Ratio).toFixed()}%`}
-                        <JettonLogo jetton={currencyB} size={26} className="absolute right-1" />
+                        <JettonLogo jetton={currencyB} size={24} className="absolute right-1" />
                     </div>
                 )}
             </div>

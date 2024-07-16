@@ -25,6 +25,8 @@ const PriceSlider = ({ priceLower, priceUpper, onLeftRangeInput, onRightRangeInp
 
     const values = [Number(leftPrice?.toFixed()), Number(rightPrice?.toFixed())];
 
+    const priceNum = Number(mintInfo.price?.toFixed(4));
+
     const setValues = (values: number[]) => {
         onLeftRangeInput(values[0].toString());
         onRightRangeInput(values[1].toString());
@@ -38,8 +40,8 @@ const PriceSlider = ({ priceLower, priceUpper, onLeftRangeInput, onRightRangeInp
                 trackClassName="absolute top-1/2 h-4 bg-border-light rounded-xl"
                 value={values}
                 onChange={(val) => setValues(val)}
-                min={0}
-                max={2}
+                min={priceNum * 0.01}
+                max={priceNum * 2}
                 step={0.01}
                 pearling
                 minDistance={0.01}

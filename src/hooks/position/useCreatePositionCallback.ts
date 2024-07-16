@@ -8,7 +8,6 @@ import { SwapCallbackState } from "src/types/swap-state";
 import { JettonWallet } from "src/sdk/src/contracts/common/JettonWallet";
 import { IDerivedMintInfo } from "src/state/mintStore";
 import { usePoolV3Contract } from "../contracts/usePoolV3Contract";
-import { TickMath } from "src/sdk/src";
 import { parseUnits } from "src/utils/common/parseUnits";
 
 export function useCreatePositionCallback({
@@ -121,7 +120,7 @@ export function useCreatePositionCallback({
             },
         ];
 
-        sender.sendMiltiple(messages);
+        sender.sendMiltiple(messages.reverse());
 
         console.log(
             "jetton0Amount: ",

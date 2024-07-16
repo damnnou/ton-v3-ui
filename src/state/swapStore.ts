@@ -5,9 +5,10 @@ import { jettons } from "src/constants/jettons";
 import { useTonConnect } from "src/hooks/common/useTonConnect";
 import { useJetton } from "src/hooks/jetton/useJetton";
 import { useJettonBalance } from "src/hooks/jetton/useJettonBalance";
+import { usePoolV3 } from "src/hooks/pool/usePoolV3";
 import { useBestTradeExactIn, useBestTradeExactOut } from "src/hooks/swap/useBestTrade";
 import useSwapSlippageTolerance from "src/hooks/swap/useSwapSlippageTolerance";
-import { TradeType } from "src/sdk/src";
+import { Pool, TradeType } from "src/sdk/src";
 import { Jetton } from "src/sdk/src/entities/Jetton";
 import { JettonAmount } from "src/sdk/src/entities/JettonAmount";
 import { Percent } from "src/sdk/src/entities/Percent";
@@ -134,6 +135,7 @@ export function useDerivedSwapInfo(): {
     // tick: number | undefined;
     // tickSpacing: number | undefined;
     poolAddress: string | undefined;
+    pool: Pool | null | undefined;
     isExactIn: boolean;
 } {
     const { wallet: account } = useTonConnect();
@@ -154,8 +156,10 @@ export function useDerivedSwapInfo(): {
         [typedValue, isExactIn, inputCurrency, outputCurrency]
     );
 
-    const bestTradeExactIn = useBestTradeExactIn(isExactIn ? parsedAmount : undefined, outputCurrency ?? undefined);
-    const bestTradeExactOut = useBestTradeExactOut(inputCurrency ?? undefined, !isExactIn ? parsedAmount : undefined);
+    const [, pool] = usePoolV3(POOL);
+
+    const bestTradeExactIn = useBestTradeExactIn(isExactIn ? parsedAmount : undefined, outputCurrency ?? undefined, pool);
+    const bestTradeExactOut = useBestTradeExactOut(inputCurrency ?? undefined, !isExactIn ? parsedAmount : undefined, pool);
 
     const trade = (isExactIn ? bestTradeExactIn : bestTradeExactOut) ?? undefined;
 
@@ -225,5 +229,6 @@ export function useDerivedSwapInfo(): {
         // tick: globalState && globalState[1],
         // tickSpacing: tickSpacing,
         poolAddress,
+        pool,
     };
 }
