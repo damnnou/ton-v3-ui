@@ -81,6 +81,8 @@ export function usePoolV3(poolAddres: string | undefined): [PoolStateType, PoolS
             nftv3item_counter: poolData.nftv3item_counter,
         };
 
+        // const jettons = jetton0.sortsBefore(jetton1) ? [jetton0, jetton1] : [jetton1, jetton0];
+
         const poolSDK = new PoolSDK(
             jetton0,
             jetton1,

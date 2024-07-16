@@ -66,13 +66,11 @@ const CreatePositionPage = () => {
         };
     }, []);
 
-    if (poolState === PoolState.EXISTS && !mintInfo.price) return <div className="mt-24">Something went wrong. Please reload the page</div>;
-
     return (
         <div className="flex w-full gap-8 my-12">
             <div className="flex flex-col w-full">
                 <h2 className="font-semibold text-2xl text-left mb-6">1. Select Range</h2>
-                <div className="flex flex-col gap-4 w-full p-8 bg-light text-left rounded-3xl border-0 border-border-light">
+                <div className="flex flex-col gap-4 w-full p-8 bg-light text-left rounded-3xl border border-border-light">
                     <h3 className="text-xl">Choose liquidity preset</h3>
                     <PresetTabs currencyA={pool?.jetton0} currencyB={pool?.jetton1} mintInfo={mintInfo} />
                     <h3 className="text-xl mt-4">Price</h3>

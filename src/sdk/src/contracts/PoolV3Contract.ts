@@ -35,7 +35,7 @@ export type PoolV3ContractConfig = {
   accountv3_code: Cell;
   position_nftv3_code: Cell;
 
-  nftv3_content?: Cell;
+  //nftv3_content? : Cell;
 };
 
 export class TickInfoWrapper {
@@ -77,7 +77,7 @@ export function poolv3ContractConfigToCell(config: PoolV3ContractConfig): Cell {
 
   let nftItemContentToPack: { [s: string]: string | undefined } = {
     name: 'AMM Pool Position',
-    description: 'LP Position ',
+    description: 'LP Position',
     content_url:
       'https://pimenovalexander.github.io/resources/icons/NFTItem.png',
     image: 'https://pimenovalexander.github.io/resources/icons/NFTItem.png',
@@ -92,6 +92,16 @@ export function poolv3ContractConfigToCell(config: PoolV3ContractConfig): Cell {
     .storeAddress(config.jetton0_wallet)
     .storeAddress(config.jetton1_wallet)
     .storeUint(config.tick_spacing, 24)
+
+    .storeRef(
+      beginCell()
+        .storeUint(0n, 256) // poolv3::feeGrowthGlobal0X128
+        .storeUint(0n, 256) // poolv3::feeGrowthGlobal1X128
+        .storeUint(0n, 128) // poolv3::collectedProtocolFee0
+        .storeUint(0n, 128) // poolv3::collectedProtocolFee1
+        .endCell()
+    )
+
     .storeRef(
       beginCell()
         .storeUint(config.pool_active ? 1 : 0, 1)
@@ -102,13 +112,17 @@ export function poolv3ContractConfigToCell(config: PoolV3ContractConfig): Cell {
 
         .storeUint(0, 64) // NFT Inital counter
 
-        .storeRef(config.nftv3_content ?? nftContentPacked)
+        .storeRef(nftContentPacked)
         .storeRef(nftItemContentPacked)
         .endCell()
     )
     .storeRef(beginCell().storeDict(ticks).endCell())
-    .storeRef(config.accountv3_code)
-    .storeRef(config.position_nftv3_code)
+    .storeRef(
+      beginCell()
+        .storeRef(config.accountv3_code)
+        .storeRef(config.position_nftv3_code)
+        .endCell()
+    )
     .endCell();
 }
 
@@ -162,7 +176,30 @@ export class PoolV3Contract implements Contract {
     });
   }
 
-  async sendMint(
+  async sendSetFees(
+    provider: ContractProvider,
+    sender: Sender,
+    value: bigint,
+
+    protocolFee: number,
+    lpFee: number,
+    currentFee: number
+  ) {
+    const msg_body = beginCell()
+      .storeUint(ContractOpcodes.POOLV3_SET_FEE, 32) // OP code
+      .storeUint(protocolFee, 16)
+      .storeUint(lpFee, 16)
+      .storeUint(currentFee, 16)
+      .endCell();
+
+    await provider.internal(sender, {
+      value,
+      sendMode: SendMode.PAY_GAS_SEPARATELY,
+      body: msg_body,
+    });
+  }
+
+  async sendMintDebug(
     provider: ContractProvider,
     sender: Sender,
     value: bigint,
@@ -187,7 +224,7 @@ export class PoolV3Contract implements Contract {
     });
   }
 
-  async sendBurn(
+  async sendBurnDebug(
     provider: ContractProvider,
     sender: Sender,
     value: bigint,
@@ -213,7 +250,7 @@ export class PoolV3Contract implements Contract {
     });
   }
 
-  async sendSwap(
+  async sendSwapDebug(
     provider: ContractProvider,
     sender: Sender,
     value: bigint,
@@ -224,11 +261,11 @@ export class PoolV3Contract implements Contract {
     sqrtPriceLimitX96: bigint
   ) {
     const msg_body = beginCell()
-      .storeUint(ContractOpcodes.POOLV3_SWAP, 32) // OP code
+      .storeUint(ContractOpcodes.POOLV3_SWAP_M, 32) // OP code
       .storeAddress(recipient)
-      .storeInt(zeroForOne ? 1 : 0, 1)
-      .storeInt(amountSpecified, 256)
-      .storeInt(sqrtPriceLimitX96, 160)
+      .storeUint(zeroForOne ? 1 : 0, 1)
+      .storeUint(amountSpecified, 256)
+      .storeUint(sqrtPriceLimitX96, 160)
 
       .endCell();
 
@@ -309,6 +346,11 @@ export class PoolV3Contract implements Contract {
       tick: stack.readNumber(),
       price_sqrt: stack.readBigNumber(),
       liquidity: stack.readBigNumber(),
+
+      // feeGrowthGlobal0X128: stack.readBigNumber(),
+      // feeGrowthGlobal1X128: stack.readBigNumber(),
+      // collectedProtocolFee0: stack.readBigNumber(),
+      // collectedProtocolFee1: stack.readBigNumber(),
 
       nftv3item_counter: stack.readNumber(),
     };
@@ -409,6 +451,20 @@ export class PoolV3Contract implements Contract {
     return result;
   }
 
+  async getSwapEstimate(
+    provider: ContractProvider,
+    zeroForOne: boolean,
+    amount: bigint,
+    sqrtPriceLimitX96: bigint
+  ) {
+    const { stack } = await provider.get('getSwapEstimate', [
+      { type: 'int', value: BigInt(zeroForOne ? 1 : 0) },
+      { type: 'int', value: BigInt(amount) },
+      { type: 'int', value: BigInt(sqrtPriceLimitX96) },
+    ]);
+    return { amount0: stack.readBigNumber(), amount1: stack.readBigNumber() };
+  }
+
   /* Tick math related getters */
   async getSqrtRatioAtTick(provider: ContractProvider, tick: number) {
     const { stack } = await provider.get('getSqrtRatioAtTick', [
@@ -459,6 +515,12 @@ export class PoolV3Contract implements Contract {
       { type: 'int', value: BigInt(index) },
     ]);
     return res.stack.readAddress();
+  }
+
+  async getNFTCollectionData(provider: ContractProvider) {
+    const res = await provider.get('get_collection_data', []);
+    res.stack.skip(1);
+    return res.stack.readCell();
   }
 
   /* Math for testing only */

@@ -5,7 +5,7 @@ import { Wallet } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const Header = () => (
-    <header className="sticky top-4 z-10 flex justify-between items-center p-2 bg-light border-2 border-border-light rounded-2xl gap-4">
+    <header className="sticky top-4 z-10 flex justify-between items-center p-2 bg-light border border-border-light rounded-2xl gap-4">
         <Algebra />
         <Navigation />
         <Account />

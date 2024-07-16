@@ -189,15 +189,7 @@ export function useDerivedMintInfo(
     const tokenB = currencyB;
     const baseToken = baseCurrency;
 
-    const [token0, token1] = useMemo(
-        () =>
-            tokenA && tokenB && !tokenA.equals(tokenB)
-                ? tokenA.sortsBefore(tokenB)
-                    ? [tokenA, tokenB]
-                    : [tokenB, tokenA]
-                : [undefined, undefined],
-        [tokenA, tokenB]
-    );
+    const [token0, token1] = [tokenA, tokenB];
 
     const [addressA, addressB] = [currencyA?.address, currencyB?.address] as string[];
 
@@ -238,7 +230,7 @@ export function useDerivedMintInfo(
             // get the amount of quote currency
             return pool && token0 ? pool.priceOf(token0) : undefined;
         }
-    }, [noLiquidity, startPriceTypedValue, invertPrice, token1, token0 /* pool */]);
+    }, [noLiquidity, startPriceTypedValue, invertPrice, token1, token0, pool]);
 
     // check for invalid price input (converts to invalid ratio)
     const invalidPrice = useMemo(() => {

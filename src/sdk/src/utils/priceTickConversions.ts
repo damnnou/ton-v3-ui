@@ -21,9 +21,11 @@ export function tickToPrice(
 
   const ratioX192 = JSBI.multiply(sqrtRatioX96, sqrtRatioX96);
 
-  return baseToken.sortsBefore(quoteToken)
-    ? new Price(baseToken, quoteToken, Q192, ratioX192)
-    : new Price(baseToken, quoteToken, ratioX192, Q192);
+  return new Price(baseToken, quoteToken, Q192, ratioX192);
+
+  // return baseToken.sortsBefore(quoteToken)
+  //   ? new Price(baseToken, quoteToken, Q192, ratioX192)
+  //   : new Price(baseToken, quoteToken, ratioX192, Q192);
 }
 
 /**
@@ -32,7 +34,9 @@ export function tickToPrice(
  * i.e. the price of the returned tick is less than or equal to the input price
  */
 export function priceToClosestTick(price: Price<Jetton, Jetton>): number {
-  const sorted = price.baseCurrency.sortsBefore(price.quoteCurrency);
+  // const sorted = price.baseCurrency.sortsBefore(price.quoteCurrency);
+
+  const sorted = true;
 
   const sqrtRatioX96 = sorted
     ? encodeSqrtRatioX96(price.numerator, price.denominator)

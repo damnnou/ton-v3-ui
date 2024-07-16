@@ -1,7 +1,6 @@
 import { AbstractJetton } from './AbstractJetton';
 import { validateAndParseAddress } from '../utils/validateAndParseAddress';
 import { Address } from '@ton/core';
-import invariant from 'tiny-invariant';
 /**
  * Represents an ERC20 token with a unique address and some metadata.
  */
@@ -30,18 +29,19 @@ export class Jetton extends AbstractJetton {
       Address.parse(this.address).equals(Address.parse(other.address))
     );
   }
-
-  /**
-   * Returns true if the address of this token sorts before the address of the other token
-   * @param other other token to compare
-   * @throws if the tokens have the same address
-   * @throws if the tokens are on different chains
-   */
-  public sortsBefore(other: Jetton): boolean {
-    invariant(this.address !== other.address, 'ADDRESSES');
-    return this.address.toLowerCase() < other.address.toLowerCase();
-  }
 }
+
+//   /**
+//    * Returns true if the address of this token sorts before the address of the other token
+//    * @param other other token to compare
+//    * @throws if the tokens have the same address
+//    * @throws if the tokens are on different chains
+//    */
+//   public sortsBefore(other: Jetton): boolean {
+//     invariant(this.address !== other.address, 'ADDRESSES');
+//     return this.address.toLowerCase() < other.address.toLowerCase();
+//   }
+// }
 
 //   /**
 //    * Return this token, which does not need to be wrapped

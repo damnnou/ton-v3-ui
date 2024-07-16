@@ -32,12 +32,7 @@ const RangeSelector = ({
     disabled,
     mintInfo,
 }: RangeSelectorProps) => {
-    const tokenA = currencyA ?? undefined;
-    const tokenB = currencyB ?? undefined;
-
-    const isSorted = useMemo(() => {
-        return tokenA && tokenB && tokenA.sortsBefore(tokenB);
-    }, [tokenA, tokenB]);
+    const isSorted = true;
 
     const leftPrice = useMemo(() => {
         return isSorted ? priceLower : priceUpper?.invert();

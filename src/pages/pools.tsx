@@ -13,7 +13,7 @@ const PoolsPage = () => {
                     </Link>
                 </div>
 
-                <div className="pb-5 bg-light border-2 border-border-light rounded-2xl">
+                <div className="pb-5 bg-light border border-border-light rounded-2xl">
                     <PoolsList />
                 </div>
             </div>

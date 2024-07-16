@@ -24,7 +24,7 @@ const TokenCard = ({ handleValueChange, value, currency, disabled, menuType }: T
     };
 
     return (
-        <label className="flex w-full gap-4 items-center h-[104px] border-2 border-border-light rounded-2xl bg-dark">
+        <label className="flex w-full gap-4 items-center h-[104px] border border-border-light rounded-2xl bg-dark">
             <div
                 onClick={() => setMenuState(menuType)}
                 className="flex w-full p-2 sm:p-4 ml-3 rounded-xl h-3/4 hover:bg-light items-center gap-4 cursor-pointer transition-all ease-in-out duration-300"

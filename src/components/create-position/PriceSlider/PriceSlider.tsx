@@ -13,12 +13,7 @@ export interface PriceSliderProps {
 }
 
 const PriceSlider = ({ priceLower, priceUpper, onLeftRangeInput, onRightRangeInput, mintInfo, currentPrice }: PriceSliderProps) => {
-    const tokenA = mintInfo.currencies.CURRENCY_A;
-    const tokenB = mintInfo.currencies.CURRENCY_B;
-
-    const isSorted = useMemo(() => {
-        return tokenA && tokenB && tokenA.sortsBefore(tokenB);
-    }, [tokenA, tokenB]);
+    const isSorted = true;
 
     const leftPrice = useMemo(() => {
         return isSorted ? priceLower : priceUpper?.invert();
@@ -31,7 +26,6 @@ const PriceSlider = ({ priceLower, priceUpper, onLeftRangeInput, onRightRangeInp
     const values = [Number(leftPrice?.toFixed()), Number(rightPrice?.toFixed())];
 
     const setValues = (values: number[]) => {
-        console.log(values[0].toString());
         onLeftRangeInput(values[0].toString());
         onRightRangeInput(values[1].toString());
     };

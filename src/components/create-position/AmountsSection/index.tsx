@@ -26,10 +26,12 @@ const AmountsSection = ({ currencyA, currencyB, mintInfo }: AmountsSectionProps)
     });
 
     return (
-        <div className="flex flex-col w-[500px] h-fit gap-4 bg-light border-0 border-border-light rounded-3xl p-4">
+        <div className="flex flex-col w-[450px] h-fit gap-4 bg-light border border-border-light rounded-3xl p-4">
             <EnterAmounts currencyA={currencyA} currencyB={currencyB} mintInfo={mintInfo} />
             <TokenRatio mintInfo={mintInfo} />
-            <ActionButton onClick={callback}>Create Position</ActionButton>
+            <ActionButton className="h-[70px]" onClick={callback}>
+                Create Position
+            </ActionButton>
         </div>
     );
 };

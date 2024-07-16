@@ -22,7 +22,7 @@ export function SwapPage() {
                 </div>
                 <div
                     className={cn(
-                        "relative w-full rounded-2xl transition-all duration-300 bg-light delay-50 overflow-hidden shadow-2xl shadow-purple-500/20 flex flex-col sm:gap-4 gap-2 border-2 border-border-light sm:p-4 sm:rounded-3xl sm:bg-light p-2",
+                        "relative w-full rounded-2xl transition-all duration-300 bg-light delay-50 overflow-hidden shadow-2xl shadow-purple-500/20 flex flex-col sm:gap-4 gap-2 border border-border-light sm:p-4 sm:rounded-3xl sm:bg-light p-2",
                         menuState === MenuState.CLOSED ? "h-[318px] sm:h-[350px]" : "h-[600px]"
                     )}
                 >
