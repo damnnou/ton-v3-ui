@@ -48,10 +48,10 @@ export const PositionCard = ({ position }: { position: ExtendedPosition }) => {
                 <div
                     className={cn(
                         "w-fit h-fit py-1 px-2 flex items-center justify-center text-sm absolute top-2 right-2 rounded-full",
-                        !isClosed ? "bg-black" : outOfRange ? "bg-yellow-600" : "bg-green-600"
+                        isClosed ? "bg-black" : outOfRange ? "bg-yellow-600" : "bg-green-600"
                     )}
                 >
-                    {!isClosed ? "Closed" : outOfRange ? "Out of range" : "In range"}
+                    {isClosed ? "Closed" : outOfRange ? "Out of range" : "In range"}
                 </div>
             </div>
             <div className="flex flex-col gap-2 p-2 w-full">

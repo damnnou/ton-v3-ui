@@ -23,16 +23,17 @@ const PoolPage = () => {
 
     if (!jetton0 || !jetton1 || !pool) {
         return (
-            <div className="flex flex-col gap-6 py-20">
-                <Skeleton className="w-64 h-10 mr-auto  animate-pulse" />
-                <Skeleton className="w-80 h-16" />
+            <div className="w-full grid grid-cols-3 gap-6 py-12 animate-fade-in">
+                <Skeleton className="w-full col-span-3 h-32 mr-auto rounded-2xl bg-border-light/50" />
+                <Skeleton className="w-full col-span-1 h-[465px] rounded-2xl bg-border-light/50" />
+                <Skeleton className="w-full col-span-2 h-12 rounded-2xl bg-border-light/50" />
             </div>
         );
     }
 
     return (
         <div className="w-full flex flex-col gap-6 py-12 animate-fade-in">
-            <section className="flex w-full items-center justify-between p-8 rounded-3xl border-0 border-border-light bg-light shadow-2xl shadow-primary-red/10">
+            <section className="flex w-full items-center justify-between p-8 rounded-2xl border-0 border-border-light bg-light shadow-2xl shadow-primary-red/10">
                 <div className="flex gap-8">
                     <div className="flex w-fit items-center">
                         <JettonLogo jetton={jetton0} size={42} />
@@ -64,9 +65,9 @@ const PoolPage = () => {
                     </div>
                 </div>
             </section>
-            <div className="flex gap-4 w-full">
+            <div className="flex gap-6 w-full">
                 <PoolDetails pool={pool} />
-                <div className="w-2/3 flex flex-col gap-4">
+                <div className="w-2/3 flex flex-col gap-6">
                     <div className="flex gap-4 w-full h-12">
                         <div className="flex items-center relative w-2/4 h-full">
                             <Input
@@ -85,8 +86,29 @@ const PoolPage = () => {
                             <Button className="rounded-xl">Create new position </Button>
                         </Link>
                     </div>
-                    {positions?.length && !isLoading ? <PositionList positions={positions} /> : <div>Loading...</div>}
-                    {positions?.length === 0 && !isLoading && (
+                    {isLoading ? (
+                        <div className="w-full flex gap-4">
+                            <div className="flex flex-col w-full">
+                                <Skeleton className="w-full h-[200px] bg-light rounded-xl z-20" />
+                                <Skeleton className="w-full h-[190px] -translate-y-12 bg-dark rounded-xl z-10" />
+                            </div>
+                            <div className="flex flex-col w-full">
+                                <Skeleton className="w-full h-[200px] bg-light rounded-xl z-20" />
+                                <Skeleton className="w-full h-[190px] -translate-y-12 bg-dark rounded-xl z-10" />
+                            </div>
+                            <div className="flex flex-col w-full">
+                                <Skeleton className="w-full h-[200px] bg-light rounded-xl z-20" />
+                                <Skeleton className="w-full h-[190px] -translate-y-12 bg-dark rounded-xl z-10" />
+                            </div>
+                            <div className="flex flex-col w-full">
+                                <Skeleton className="w-full h-[200px] bg-light rounded-xl z-20" />
+                                <Skeleton className="w-full h-[190px] -translate-y-12 bg-dark rounded-xl z-10" />
+                            </div>
+                        </div>
+                    ) : positions?.length ? (
+                        <PositionList positions={positions} />
+                    ) : null}
+                    {!positions?.length && !isLoading && (
                         <div className="w-full">
                             <div className="flex flex-col mt-16 items-center justify-center gap-4 text-xl p-4">
                                 <Info size={32} />

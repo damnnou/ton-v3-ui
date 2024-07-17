@@ -64,26 +64,25 @@ const DictionaryTickInfo: DictionaryValue<TickInfoWrapper> = {
   },
 };
 
+let nftContentToPack: { [s: string]: string | undefined } = {
+  name: 'AMM Pool Minter',
+  description: 'AMM Pool LP Minter',
+  uri: '',
+  image: 'https://pimenovalexander.github.io/resources/icons/NFT.png',
+};
+const nftContentPacked: Cell = packJettonOnchainMetadata(nftContentToPack);
+
+let nftItemContentToPack: { [s: string]: string | undefined } = {
+  name: 'AMM Pool Position',
+  description: 'LP Position',
+  content_url: 'https://pimenovalexander.github.io/resources/icons/NFTItem.png',
+  image: 'https://pimenovalexander.github.io/resources/icons/NFTItem.png',
+};
+const nftItemContentPacked: Cell =
+  packJettonOnchainMetadata(nftItemContentToPack);
+
 export function poolv3ContractConfigToCell(config: PoolV3ContractConfig): Cell {
   let ticks = Dictionary.empty(Dictionary.Keys.Int(24), DictionaryTickInfo);
-
-  let nftContentToPack: { [s: string]: string | undefined } = {
-    name: 'AMM Pool Minter',
-    description: 'AMM Pool LP Minter',
-    uri: '',
-    image: 'https://pimenovalexander.github.io/resources/icons/NFT.png',
-  };
-  const nftContentPacked: Cell = packJettonOnchainMetadata(nftContentToPack);
-
-  let nftItemContentToPack: { [s: string]: string | undefined } = {
-    name: 'AMM Pool Position',
-    description: 'LP Position',
-    content_url:
-      'https://pimenovalexander.github.io/resources/icons/NFTItem.png',
-    image: 'https://pimenovalexander.github.io/resources/icons/NFTItem.png',
-  };
-  const nftItemContentPacked: Cell =
-    packJettonOnchainMetadata(nftItemContentToPack);
 
   return beginCell()
     .storeAddress(config.router_address)
@@ -167,6 +166,8 @@ export class PoolV3Contract implements Contract {
       .storeUint(ContractOpcodes.POOLV3_INIT, 32) // OP code
       .storeAddress(recipient)
       .storeUint(sqrtPriceX96, 160)
+      .storeRef(nftContentPacked)
+      .storeRef(nftItemContentPacked)
       .endCell();
 
     await provider.internal(sender, {
@@ -347,10 +348,10 @@ export class PoolV3Contract implements Contract {
       price_sqrt: stack.readBigNumber(),
       liquidity: stack.readBigNumber(),
 
-      // feeGrowthGlobal0X128: stack.readBigNumber(),
-      // feeGrowthGlobal1X128: stack.readBigNumber(),
-      // collectedProtocolFee0: stack.readBigNumber(),
-      // collectedProtocolFee1: stack.readBigNumber(),
+      feeGrowthGlobal0X128: stack.readBigNumber(),
+      feeGrowthGlobal1X128: stack.readBigNumber(),
+      collectedProtocolFee0: stack.readBigNumber(),
+      collectedProtocolFee1: stack.readBigNumber(),
 
       nftv3item_counter: stack.readNumber(),
     };
@@ -411,24 +412,29 @@ export class PoolV3Contract implements Contract {
   }
 
   /**
-   *  Returns a hash object of ticks infos with all internal data starting from key >=tickNumber
+   *  Returns a hash object of ticks infos with all internal data starting from key >=tickNumber  or key <= tickNumber
    *  and no more then number. Unfortunataly there is an internal limit of 255 tickInfos
    *
    *
    *  @param provider   blockchain access provider
-   *  @param tickNumber Starting tick. Ticks greater or equal will be returned.
+   *  @param tickNumber Starting tick. Ticks greater or equal will be returned with back == false, with back == true - less or equal keys will be enumerated
    *  @param amount     Number of tick infos to be returned
+   *  @param back       directions of ticks
    *
    **/
   async getTickInfosFrom(
     provider: ContractProvider,
     tickNumber: number,
-    amount: number
+    amount: number,
+    back: boolean = false
   ) {
-    const { stack } = await provider.get('getTickInfosFrom', [
-      { type: 'int', value: BigInt(tickNumber) },
-      { type: 'int', value: BigInt(amount) },
-    ]);
+    const { stack } = await provider.get(
+      back ? 'getTickInfosBackFrom' : 'getTickInfosFrom',
+      [
+        { type: 'int', value: BigInt(tickNumber) },
+        { type: 'int', value: BigInt(amount) },
+      ]
+    );
 
     let keyReader = stack.readTuple();
     let valueReader = stack.readTuple();
@@ -515,12 +521,6 @@ export class PoolV3Contract implements Contract {
       { type: 'int', value: BigInt(index) },
     ]);
     return res.stack.readAddress();
-  }
-
-  async getNFTCollectionData(provider: ContractProvider) {
-    const res = await provider.get('get_collection_data', []);
-    res.stack.skip(1);
-    return res.stack.readCell();
   }
 
   /* Math for testing only */

@@ -20,7 +20,7 @@ export function ManageLiquidityModal({
     setIsOpen: (isOpen: boolean) => void;
     mintInfo: IDerivedMintInfo;
 }) {
-    const [manageLiquidity, setManageLiquidity] = useState<ManageLiquidity>(ManageLiquidity.ADD);
+    const [manageLiquidity, setManageLiquidity] = useState<ManageLiquidity>(ManageLiquidity.REMOVE);
 
     const { independentField, typedValue } = useMintState();
 

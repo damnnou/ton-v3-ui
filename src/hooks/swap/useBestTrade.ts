@@ -1,12 +1,11 @@
-import { useMemo } from "react";
-import { Fraction, Pool, Route, TradeType } from "src/sdk/src";
+import { useEffect, useMemo, useState } from "react";
+import { Pool, Route, SqrtPriceMath, TradeType } from "src/sdk/src";
 import { Jetton } from "src/sdk/src/entities/Jetton";
 import { JettonAmount } from "src/sdk/src/entities/JettonAmount";
 import { Trade } from "src/sdk/src/entities/trade";
 import { TradeState, TradeStateType } from "src/types/trade-state";
-
-// TODO: Remove this
-import BigNumber from "bignumber.js";
+import { usePoolV3Contract } from "../contracts/usePoolV3Contract";
+import { POOL } from "src/constants/addresses";
 
 // const DEFAULT_GAS_QUOTE = 2_000_000
 
@@ -27,8 +26,31 @@ export function useBestTradeExactIn(
 } {
     // const { routes, loading: routesLoading } = useAllRoutes(amountIn?.jetton, currencyOut);
 
+    const [isLoading, setIsLoading] = useState(false);
+    const [isError, setIsError] = useState(false);
+    const [amountOut, setAmountOut] = useState<bigint>();
+
+    const poolV3Contract = usePoolV3Contract(POOL);
+
+    useEffect(() => {
+        if (!amountIn || !currencyOut || !poolV3Contract || !pool) return;
+        setIsError(false);
+        setIsLoading(true);
+        const nextSqrtPrice = SqrtPriceMath.getNextSqrtPriceFromInput(pool.sqrtRatioX96, pool.liquidity, amountIn.quotient, true);
+
+        poolV3Contract
+            .getSwapEstimate(true, BigInt(amountIn.quotient.toString()), BigInt(nextSqrtPrice.toString()))
+            .then((res) => {
+                setAmountOut(-res.amount1);
+                setIsLoading(false);
+            })
+            .catch(() => {
+                setIsError(true);
+            });
+    }, [amountIn, currencyOut, pool, poolV3Contract]);
+
     const trade = useMemo(() => {
-        if (!amountIn || !currencyOut || !pool) {
+        if (!amountIn || !currencyOut || !pool || (!amountOut && !isLoading) || isError) {
             return {
                 state: TradeState.INVALID,
                 trade: null,
@@ -36,18 +58,15 @@ export function useBestTradeExactIn(
             };
         }
 
+        if (isLoading || !amountOut) {
+            return {
+                state: TradeState.LOADING,
+                trade: null,
+                refetch: undefined,
+            };
+        }
+
         const route = new Route([pool], amountIn.jetton, currencyOut);
-
-        const x = BigNumber(amountIn.toFixed());
-        const L = BigNumber(pool.liquidity.toString());
-        const sp = BigNumber(pool.sqrtRatioX96.toString()).div(BigNumber(2).pow(96));
-        const num: BigNumber = L.pow(BigNumber(2));
-        const denum: BigNumber = L.div(sp).plus(BigNumber((-x).toString()));
-        const y: BigNumber = num.div(denum).plus(L.times(sp));
-
-        const outputAmount = BigInt(y.toFixed(0));
-
-        console.log("outputAmount", outputAmount);
 
         return {
             state: TradeState.VALID,
@@ -56,12 +75,12 @@ export function useBestTradeExactIn(
                 route,
                 tradeType: TradeType.EXACT_INPUT,
                 inputAmount: amountIn,
-                outputAmount: JettonAmount.fromRawAmount(currencyOut, outputAmount.toString()),
+                outputAmount: JettonAmount.fromRawAmount(currencyOut, amountOut.toString()),
             }),
             priceAfterSwap: null,
             refetch: undefined,
         };
-    }, [amountIn, currencyOut, pool]);
+    }, [amountIn, currencyOut, pool, amountOut, isLoading, isError]);
 
     return trade;
 }
@@ -82,11 +101,46 @@ export function useBestTradeExactOut(
     priceAfterSwap?: bigint[] | null;
 } {
     // const { routes, loading: routesLoading } = useAllRoutes(currencyIn, amountOut?.jetton);
+    const [isLoading, setIsLoading] = useState(false);
+    const [isError, setIsError] = useState(false);
+    const [amountIn, setAmountIn] = useState<bigint>();
+
+    const poolV3Contract = usePoolV3Contract(POOL);
+
+    useEffect(() => {
+        if (!amountOut || !currencyIn || !poolV3Contract || !pool) return;
+        setIsError(false);
+        setIsLoading(true);
+        const nextSqrtPrice = SqrtPriceMath.getNextSqrtPriceFromInput(pool.sqrtRatioX96, pool.liquidity, amountOut.quotient, true);
+
+        poolV3Contract
+            .getSwapEstimate(true, BigInt(amountOut.quotient.toString()), BigInt(nextSqrtPrice.toString()))
+            .then((res) => {
+                /* dirt */
+                const amount0 = Number(res.amount0);
+                const amount1 = Number(-res.amount1);
+                const multiplier = amount0 / amount1;
+
+                setAmountIn(BigInt(Math.floor(amount0 * multiplier)));
+                setIsLoading(false);
+            })
+            .catch(() => {
+                setIsError(true);
+            });
+    }, [amountOut, currencyIn, pool, poolV3Contract]);
 
     const trade = useMemo(() => {
-        if (!amountOut || !currencyIn || !pool) {
+        if (!amountOut || !currencyIn || !pool || (!amountIn && !isLoading) || isError) {
             return {
                 state: TradeState.INVALID,
+                trade: null,
+                refetch: undefined,
+            };
+        }
+
+        if (isLoading || !amountIn) {
+            return {
+                state: TradeState.LOADING,
                 trade: null,
                 refetch: undefined,
             };
@@ -100,13 +154,13 @@ export function useBestTradeExactOut(
             trade: Trade.createUncheckedTrade({
                 route,
                 tradeType: TradeType.EXACT_OUTPUT,
-                inputAmount: JettonAmount.fromRawAmount(currencyIn, amountOut.quotient).multiply(new Fraction(1000, 987)), // hardcode price
+                inputAmount: JettonAmount.fromRawAmount(currencyIn, amountIn.toString()),
                 outputAmount: amountOut,
             }),
             priceAfterSwap: null,
             refetch: undefined,
         };
-    }, [amountOut, currencyIn, pool]);
+    }, [amountOut, currencyIn, pool, amountIn, isLoading, isError]);
 
     return trade;
 }

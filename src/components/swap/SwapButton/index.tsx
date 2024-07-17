@@ -5,13 +5,14 @@ import { useTonConnect } from "src/hooks/common/useTonConnect";
 import { useSwapCallback } from "src/hooks/swap/useSwapCallback";
 import { useDerivedSwapInfo, useSwapState } from "src/state/swapStore";
 import { SwapField } from "src/types/swap-field";
+import { TradeState } from "src/types/trade-state";
 
 export const SwapButton = () => {
     const { connected, network } = useTonConnect();
     const { open } = useTonConnectModal();
 
     const { independentField } = useSwapState();
-    const { inputError: swapInputError, toggledTrade: trade, parsedAmount, pool } = useDerivedSwapInfo();
+    const { inputError: swapInputError, toggledTrade: trade, parsedAmount, pool, tradeState } = useDerivedSwapInfo();
 
     const amountIn = independentField === SwapField.INPUT ? parsedAmount : trade?.inputAmount;
 
@@ -27,7 +28,9 @@ export const SwapButton = () => {
 
     const isWrongChain = network !== CHAIN.TESTNET;
 
-    if (!pool)
+    // if (!isValid) return <ActionButton disabled>{swapInputError}</ActionButton>;
+
+    if (!pool || tradeState.state === TradeState.LOADING)
         return (
             <ActionButton disabled>
                 <Spinner />

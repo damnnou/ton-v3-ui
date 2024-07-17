@@ -75,5 +75,5 @@ export function useAllPositions({
         });
     }, [poolAddress, tonClient, data, pool]);
 
-    return { positions, isLoading: isLoading || isAllPositionLoading };
+    return { positions, isLoading: !positions && (isLoading || isAllPositionLoading) };
 }

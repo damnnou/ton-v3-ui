@@ -1,5 +1,4 @@
 import { useCallback, useMemo } from "react";
-// import { Pool } from "../pool/usePoolV3";
 import { Address, beginCell, SendMode, toNano } from "@ton/core";
 import { ContractOpcodes } from "src/sdk/src/contracts/opCodes";
 import { parseUnits } from "src/utils/common/parseUnits";
@@ -13,8 +12,8 @@ import { JettonWallet } from "src/sdk/src/contracts/common/JettonWallet";
 export function useSwapCallback({
     pool,
     amountIn,
-    amountOut,
-}: {
+}: // amountOut,
+{
     pool: Pool | null | undefined;
     amountIn: string | undefined;
     amountOut: string | undefined;

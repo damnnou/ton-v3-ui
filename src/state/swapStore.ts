@@ -15,7 +15,7 @@ import { Percent } from "src/sdk/src/entities/Percent";
 import { Trade } from "src/sdk/src/entities/trade";
 import { TickMath } from "src/sdk/src/utils/tickMath";
 import { SwapField, SwapFieldType } from "src/types/swap-field";
-import { TradeStateType } from "src/types/trade-state";
+import { TradeState, TradeStateType } from "src/types/trade-state";
 import { parseUnits } from "src/utils/common/parseUnits";
 import { create } from "zustand";
 
@@ -191,6 +191,10 @@ export function useDerivedSwapInfo(): {
 
     if (!currencies[SwapField.INPUT] || !currencies[SwapField.OUTPUT]) {
         inputError = inputError ?? `Select a token`;
+    }
+
+    if (trade.state === TradeState.INVALID || trade.state === TradeState.NO_ROUTE_FOUND) {
+        inputError = inputError ?? `Insufficient liquidity`;
     }
 
     const toggledTrade = trade.trade ?? undefined;
