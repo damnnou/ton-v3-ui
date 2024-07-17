@@ -1,9 +1,9 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { HeaderItem } from "./common";
-import { Jetton } from "src/constants/jettons";
 import { AddressType } from "@ston-fi/sdk";
 import { formatUSD } from "src/utils/common/formatUSD";
 import { JettonLogo } from "../JettonLogo";
+import { Jetton } from "src/sdk/src";
 
 interface Pair {
     token0: Jetton;

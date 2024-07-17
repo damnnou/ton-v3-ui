@@ -135,8 +135,9 @@ export class Trade<
       .reduce((total, cur) => total + cur, 0);
     const poolAddressSet = new Set<string>();
     for (const { route } of routes) {
-      for (const pool of route.pools) {
-        poolAddressSet.add(Pool.getAddress(pool.jetton0, pool.jetton1));
+      // eslint-disable-next-line no-empty-pattern
+      for (const {} of route.pools) {
+        poolAddressSet.add(Pool.getAddress(/*pool.jetton0, pool.jetton1 */));
       }
     }
 

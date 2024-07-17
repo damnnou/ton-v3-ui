@@ -27,7 +27,7 @@ const RangeSelector = ({
     getIncrementLower,
     getDecrementUpper,
     getIncrementUpper,
-    currencyA,
+    // currencyA,
     currencyB,
     disabled,
     mintInfo,

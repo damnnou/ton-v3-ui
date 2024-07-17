@@ -7,13 +7,11 @@ import RangeSelector from "src/components/create-position/RangeSelector";
 import { usePoolV3 } from "src/hooks/pool/usePoolV3";
 import { Bound, INITIAL_POOL_FEE } from "src/sdk/src";
 import { useDerivedMintInfo, useMintActionHandlers, useMintState, useRangeHopCallbacks } from "src/state/mintStore";
-import { ManageLiquidity } from "src/types/manage-liquidity";
-import { PoolState } from "src/types/pool-state";
 
 const CreatePositionPage = () => {
     const { poolId } = useParams();
 
-    const [poolState, pool] = usePoolV3(poolId);
+    const [, pool] = usePoolV3(poolId);
 
     const mintInfo = useDerivedMintInfo(
         pool?.jetton0 ?? undefined,

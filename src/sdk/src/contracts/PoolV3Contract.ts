@@ -9,7 +9,6 @@ import {
   ContractProvider,
   Sender,
   SendMode,
-  MessageRelaxed,
 } from '@ton/core';
 import { ContractOpcodes } from './opCodes';
 import { packJettonOnchainMetadata } from './common/jettonContent';
@@ -55,7 +54,7 @@ const DictionaryTickInfo: DictionaryValue<TickInfoWrapper> = {
     builder.storeUint(src.outerFeeGrowth1Token, 256);
   },
   parse(src) {
-    let tickInfo = new TickInfoWrapper();
+    const tickInfo = new TickInfoWrapper();
     tickInfo.liquidityGross = src.loadUintBig(256);
     tickInfo.liquidityNet = src.loadIntBig(128);
     tickInfo.outerFeeGrowth0Token = src.loadUintBig(256);
@@ -64,25 +63,25 @@ const DictionaryTickInfo: DictionaryValue<TickInfoWrapper> = {
   },
 };
 
-let nftContentToPack: { [s: string]: string | undefined } = {
+const nftContentToPack: { [s: string]: string | undefined } = {
   name: 'AMM Pool Minter',
   description: 'AMM Pool LP Minter',
   uri: '',
   image: 'https://pimenovalexander.github.io/resources/icons/NFT.png',
 };
-const nftContentPacked: Cell = packJettonOnchainMetadata(nftContentToPack);
+const nftContentPacked: any = packJettonOnchainMetadata(nftContentToPack);
 
-let nftItemContentToPack: { [s: string]: string | undefined } = {
+const nftItemContentToPack: { [s: string]: string | undefined } = {
   name: 'AMM Pool Position',
   description: 'LP Position',
   content_url: 'https://pimenovalexander.github.io/resources/icons/NFTItem.png',
   image: 'https://pimenovalexander.github.io/resources/icons/NFTItem.png',
 };
-const nftItemContentPacked: Cell =
+const nftItemContentPacked: any =
   packJettonOnchainMetadata(nftItemContentToPack);
 
 export function poolv3ContractConfigToCell(config: PoolV3ContractConfig): Cell {
-  let ticks = Dictionary.empty(Dictionary.Keys.Int(24), DictionaryTickInfo);
+  const ticks = Dictionary.empty(Dictionary.Keys.Int(24), DictionaryTickInfo);
 
   return beginCell()
     .storeAddress(config.router_address)
@@ -316,8 +315,8 @@ export class PoolV3Contract implements Contract {
   async getPriceAndLiquidity(provider: ContractProvider) {
     const { stack } = await provider.get('getPriceAndLiquidity', []);
 
-    let priceSqrt: bigint = stack.readBigNumber();
-    let liquidity: bigint = stack.readBigNumber();
+    const priceSqrt: bigint = stack.readBigNumber();
+    const liquidity: bigint = stack.readBigNumber();
     console.log('  contract data : ', priceSqrt, ' ', liquidity);
     return {
       priceSqrt,
@@ -380,7 +379,7 @@ export class PoolV3Contract implements Contract {
       { type: 'int', value: BigInt(tickNumber) },
     ]);
 
-    let tickInfo = new TickInfoWrapper();
+    const tickInfo = new TickInfoWrapper();
 
     tickInfo.liquidityGross = stack.readBigNumber();
     tickInfo.liquidityNet = stack.readBigNumber();
@@ -403,8 +402,8 @@ export class PoolV3Contract implements Contract {
       { type: 'int', value: BigInt(amount) },
     ]);
 
-    let reader = stack.readTuple();
-    let result = [];
+    const reader = stack.readTuple();
+    const result = [];
 
     while (reader.remaining) result.push(reader.readNumber());
 
@@ -436,12 +435,12 @@ export class PoolV3Contract implements Contract {
       ]
     );
 
-    let keyReader = stack.readTuple();
-    let valueReader = stack.readTuple();
+    const keyReader = stack.readTuple();
+    const valueReader = stack.readTuple();
 
     // console.log(valueReader);
 
-    let result: { [key: number]: TickInfoWrapper } = {};
+    const result: { [key: number]: TickInfoWrapper } = {};
 
     while (keyReader.remaining && valueReader.remaining) {
       const infoTuple = valueReader.readTuple();

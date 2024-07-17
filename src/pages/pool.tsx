@@ -33,35 +33,42 @@ const PoolPage = () => {
 
     return (
         <div className="w-full flex flex-col gap-6 py-12 animate-fade-in">
-            <section className="flex w-full items-center justify-between p-8 rounded-2xl border-0 border-border-light bg-light shadow-2xl shadow-primary-red/10">
-                <div className="flex gap-8">
-                    <div className="flex w-fit items-center">
+            <section className="flex w-full items-center justify-between p-4 rounded-2xl border-0 border-border-light bg-light shadow-2xl shadow-primary-red/10">
+                <div className="flex gap-4 items-center">
+                    <div
+                        // style={{ background: "linear-gradient(to bottom, lightblue, white)" }}
+                        className="flex w-24 h-24 items-center justify-center rounded-xl "
+                    >
                         <JettonLogo jetton={jetton0} size={42} />
                         <JettonLogo className="-ml-2" jetton={jetton1} size={42} />
                     </div>
-                    <div className="mr-auto flex flex-col items-start">
+                    <div className="mr-auto flex flex-col gap-2 items-start">
                         <h2 className="text-2xl">
                             {jetton0.symbol} / {jetton1.symbol}
                         </h2>
-                        <div className="bg-primary-red/30 text-pink-300 rounded-xl px-2 py-1 text-sm">{`${pool.fee / 100}%`}</div>
+                        <div className="bg-primary-red/30 text-pink-300 rounded-xl p-1 px-2 text-sm">{`${pool.fee / 100}%`}</div>
                     </div>
                 </div>
-                <div className="w-fit flex gap-16">
+                <div className="w-fit flex gap-16 p-4">
                     <div className="flex flex-col items-end">
                         <h3 className="text-md opacity-50">NFT</h3>
                         <p className="text-xl">2</p>
                     </div>
                     <div className="flex flex-col items-end">
                         <h3 className="text-md opacity-50">TVL</h3>
-                        <p className="text-xl">0</p>
+                        <p className="text-xl ">$141k</p>
                     </div>
                     <div className="flex flex-col items-end">
                         <h3 className="text-md opacity-50">Volume (24h)</h3>
-                        <p className="text-xl">0</p>
+                        <p className="text-xl">$1.12k</p>
                     </div>
                     <div className="flex flex-col items-end">
                         <h3 className="text-md opacity-50">Fees (24h)</h3>
-                        <p className="text-xl">0</p>
+                        <p className="text-xl">265.23</p>
+                    </div>
+                    <div className="flex flex-col items-end">
+                        <h3 className="text-md opacity-50">APR (24h)</h3>
+                        <p className="text-xl text-green-500">+40.5%</p>
                     </div>
                 </div>
             </section>

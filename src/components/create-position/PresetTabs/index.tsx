@@ -1,4 +1,4 @@
-import { Signal, SignalHigh, SignalLow, SignalMedium, Tally2, Tally3, Tally4, Tally5 } from "lucide-react";
+import { Tally2, Tally3, Tally4, Tally5 } from "lucide-react";
 import { useMemo } from "react";
 import { Button } from "src/components/ui/Button";
 import { Jetton } from "src/sdk/src";

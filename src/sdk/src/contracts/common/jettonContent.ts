@@ -51,8 +51,8 @@ const jettonOnChainMetadataSpec: {
 };
 
 const ONCHAIN_CONTENT_PREFIX = 0x00;
-const OFFCHAIN_CONTENT_PREFIX = 0x01;
-const SNAKE_PREFIX = 0x00;
+// const OFFCHAIN_CONTENT_PREFIX = 0x01;
+// const SNAKE_PREFIX = 0x00;
 
 const contentValue: DictionaryValue<string> = {
   serialize: (src: string, builder: Builder) => {
@@ -184,8 +184,8 @@ export async function unpackJettonOnchainMetadata(
 export async function packJettonOnchainMetadata(data: {
   [s: string]: string | undefined;
 }): Promise<Cell> {
-  const KEYLEN: number = 256;
-  let records = Dictionary.empty(Dictionary.Keys.BigUint(256), contentValue);
+  // const KEYLEN: number = 256;
+  const records = Dictionary.empty(Dictionary.Keys.BigUint(256), contentValue);
 
   for (const k in data) {
     const v = data[k];
@@ -195,7 +195,7 @@ export async function packJettonOnchainMetadata(data: {
 
     if (v === undefined || v === '') continue;
 
-    let bufferToStore = Buffer.from(
+    const bufferToStore = Buffer.from(
       v,
       jettonOnChainMetadataSpec[k as JettonMetaDataKeys]
     );

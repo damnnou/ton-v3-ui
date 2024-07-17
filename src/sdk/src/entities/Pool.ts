@@ -128,11 +128,10 @@ export class Pool {
     return this._tickSpacing;
   }
 
-  public static getAddress(
-    tokenA: Jetton,
-    tokenB: Jetton,
-    initCodeHashManualOverride?: string
-  ): string {
+  public static getAddress(): // tokenA: Jetton,
+  // tokenB: Jetton,
+  // initCodeHashManualOverride?: string
+  string {
     // return computePoolAddress({
     //   poolDeployer: POOL_DEPLOYER_ADDRESSES[tokenA.chainId],
     //   tokenA,

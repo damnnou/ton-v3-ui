@@ -10,9 +10,10 @@ import {
   toNano,
 } from '@ton/core';
 
-export type JettonWalletConfig = {};
+export type JettonWalletConfig = object;
 
 export function jettonWalletConfigToCell(config: JettonWalletConfig): Cell {
+  console.log(config);
   return beginCell().endCell();
 }
 
@@ -45,21 +46,18 @@ export class JettonWallet implements Contract {
   }
 
   async getJettonBalance(provider: ContractProvider) {
-    let state = await provider.getState();
+    const state = await provider.getState();
     if (state.state.type !== 'active') {
       return 0n;
     }
-    let res = await provider.get('get_wallet_data', []);
+    const res = await provider.get('get_wallet_data', []);
     return res.stack.readBigNumber();
   }
 
   async getJettonMinterAddress(provider: ContractProvider) {
     const res = await provider.get('get_wallet_data', []);
-
-    const balance = res.stack.readBigNumber();
-    const ownerAddress = res.stack.readAddress();
+    res.stack.skip(2);
     const jettonMinterAddress = res.stack.readAddress();
-    const walletCode = res.stack.readCell();
 
     return jettonMinterAddress;
   }
